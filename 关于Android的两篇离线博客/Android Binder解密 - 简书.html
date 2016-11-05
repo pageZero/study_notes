@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<!-- saved from url=(0037)http://www.jianshu.com/p/1bd1f3ebed60 -->
+<html class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<script type="text/javascript" src="./Android Binder解密 - 简书_files/1255494d3a"></script><script src="./Android Binder解密 - 简书_files/nr-984.min.js"></script><script src="./Android Binder解密 - 简书_files/push.js"></script><script type="text/javascript" async="" src="./Android Binder解密 - 简书_files/ga.js"></script><script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","errorBeacon":"bam.nr-data.net","licenseKey":"1255494d3a","applicationID":"15702971","transactionName":"e1daR0JWVV9RER9ZWkxdRxxDUVZE","queueTime":0,"applicationTime":320,"agent":""}</script>
+<script type="text/javascript">window.NREUM||(NREUM={}),__nr_require=function(e,t,n){function r(n){if(!t[n]){var o=t[n]={exports:{}};e[n][0].call(o.exports,function(t){var o=e[n][1][t];return r(o||t)},o,o.exports)}return t[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({1:[function(e,t,n){function r(){}function o(e,t,n){return function(){return i(e,[(new Date).getTime()].concat(u(arguments)),t?null:this,n),t?void 0:this}}var i=e("handle"),a=e(2),u=e(3),c=e("ee").get("tracer"),f=NREUM;"undefined"==typeof window.newrelic&&(newrelic=f);var s=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit"],l="api-",p=l+"ixn-";a(s,function(e,t){f[t]=o(l+t,!0,"api")}),f.addPageAction=o(l+"addPageAction",!0),f.setCurrentRouteName=o(l+"routeName",!0),t.exports=newrelic,f.interaction=function(){return(new r).get()};var d=r.prototype={createTracer:function(e,t){var n={},r=this,o="function"==typeof t;return i(p+"tracer",[Date.now(),e,n],r),function(){if(c.emit((o?"":"no-")+"fn-start",[Date.now(),r,o],n),o)try{return t.apply(this,arguments)}finally{c.emit("fn-end",[Date.now()],n)}}}};a("setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(e,t){d[t]=o(p+t)}),newrelic.noticeError=function(e){"string"==typeof e&&(e=new Error(e)),i("err",[e,(new Date).getTime()])}},{}],2:[function(e,t,n){function r(e,t){var n=[],r="",i=0;for(r in e)o.call(e,r)&&(n[i]=t(r,e[r]),i+=1);return n}var o=Object.prototype.hasOwnProperty;t.exports=r},{}],3:[function(e,t,n){function r(e,t,n){t||(t=0),"undefined"==typeof n&&(n=e?e.length:0);for(var r=-1,o=n-t||0,i=Array(o<0?0:o);++r<o;)i[r]=e[t+r];return i}t.exports=r},{}],ee:[function(e,t,n){function r(){}function o(e){function t(e){return e&&e instanceof r?e:e?u(e,a,i):i()}function n(n,r,o){e&&e(n,r,o);for(var i=t(o),a=p(n),u=a.length,c=0;c<u;c++)a[c].apply(i,r);var s=f[m[n]];return s&&s.push([w,n,r,i]),i}function l(e,t){g[e]=p(e).concat(t)}function p(e){return g[e]||[]}function d(e){return s[e]=s[e]||o(n)}function v(e,t){c(e,function(e,n){t=t||"feature",m[n]=t,t in f||(f[t]=[])})}var g={},m={},w={on:l,emit:n,get:d,listeners:p,context:t,buffer:v};return w}function i(){return new r}var a="nr@context",u=e("gos"),c=e(2),f={},s={},l=t.exports=o();l.backlog=f},{}],gos:[function(e,t,n){function r(e,t,n){if(o.call(e,t))return e[t];var r=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,t,{value:r,writable:!0,enumerable:!1}),r}catch(i){}return e[t]=r,r}var o=Object.prototype.hasOwnProperty;t.exports=r},{}],handle:[function(e,t,n){function r(e,t,n,r){o.buffer([e],r),o.emit(e,t,n)}var o=e("ee").get("handle");t.exports=r,r.ee=o},{}],id:[function(e,t,n){function r(e){var t=typeof e;return!e||"object"!==t&&"function"!==t?-1:e===window?0:a(e,i,function(){return o++})}var o=1,i="nr@id",a=e("gos");t.exports=r},{}],loader:[function(e,t,n){function r(){if(!h++){var e=y.info=NREUM.info,t=s.getElementsByTagName("script")[0];if(e&&e.licenseKey&&e.applicationID&&t){c(m,function(t,n){e[t]||(e[t]=n)}),u("mark",["onload",a()],null,"api");var n=s.createElement("script");n.src="https://"+e.agent,t.parentNode.insertBefore(n,t)}}}function o(){"complete"===s.readyState&&i()}function i(){u("mark",["domContent",a()],null,"api")}function a(){return(new Date).getTime()}var u=e("handle"),c=e(2),f=window,s=f.document,l="addEventListener",p="attachEvent",d=f.XMLHttpRequest,v=d&&d.prototype;NREUM.o={ST:setTimeout,CT:clearTimeout,XHR:d,REQ:f.Request,EV:f.Event,PR:f.Promise,MO:f.MutationObserver},e(1);var g=""+location,m={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-984.min.js"},w=d&&v&&v[l]&&!/CriOS/.test(navigator.userAgent),y=t.exports={offset:a(),origin:g,features:{},xhrWrappable:w};s[l]?(s[l]("DOMContentLoaded",i,!1),f[l]("load",r,!1)):(s[p]("onreadystatechange",o),f[p]("onload",r)),u("mark",["firstbyte",a()],null,"api");var h=0},{}]},{},["loader"]);</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta name="description" content="前言 稍微看过Android FrameWork层的人应该都知道Binder，因为app与系统服务之间的通信基本上都是建立在Binder的基础上。之前对Binder也是云里雾里，似懂非懂，于是花了不少时间，看了很多资料和源码，才大致了解了Binder通信的原理，总结出来，如有错误，还望指正。 简介 Binder是什么？Binder是为跨进程通信而生的产物。众所周知，我们的app都是由Zygote进程fork出来的，每个app都运行在单独的进程中，一个app想与另外一个app进行通信，只能采用跨进程的方式，传统的Linux跨进程方式有如下几种：管道、信号量、共享内存及Socket等，And...">
+  <meta property="wb:webmaster" content="294ec9de89e7fadb">
+  <meta property="qc:admins" content="104102651453316562112116375">
+  <meta property="qc:admins" content="11635613706305617">
+  <meta property="qc:admins" content="1163561616621163056375">
+  <meta name="google-site-verification" content="cV4-qkUJZR6gmFeajx_UyPe47GW9vY6cnCrYtCHYNh4">
+  <meta name="google-site-verification" content="HF7lfF8YEGs1qtCE-kPml8Z469e2RHhGajy6JPVy5XI">
+  <meta http-equiv="mobile-agent" content="format=html5; url=http://www.jianshu.com/p/1bd1f3ebed60">
+    <!--  Meta for Smart App Banner -->
+  <meta name="apple-itunes-app" content="app-id=888237539, app-argument=jianshu://notes/5730195">
+  <!-- End -->
+
+  <!--  Meta for Twitter Card -->
+  <meta content="summary" property="twitter:card">
+  <meta content="@jianshucom" property="twitter:site">
+  <meta content="Android Binder解密" property="twitter:title">
+  <meta content="前言 稍微看过Android FrameWork层的人应该都知道Binder，因为app与系统服务之间的通信基本上都是建立在Binder的基础上。之前对Binder也是云里雾里，似懂非懂，于是花了不少时间，看了很多资料和源码，才大致了解了Binder通信的原理，总结出来，如有错误，还望指正。 简介 Binder是什么？Binder是为跨进程通信而生的产物。众所周知，我们的app都是由Zygote进程fork出来的，每个app都运行在单独的进程中，一个app想与另外一个app进行通信，只能采用跨进程的方式，传统的Linux跨进程方式有如下几种：管道、信号量、共享内存及Socket等，And..." property="twitter:description">
+  <meta content="http://www.jianshu.com/p/1bd1f3ebed60" property="twitter:url">
+  <!-- End -->
+
+  <!--  Meta for OpenGraph -->
+  <meta property="fb:app_id" content="865829053512461">
+  <meta property="og:site_name" content="简书">
+  <meta property="og:title" content="Android Binder解密">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="http://www.jianshu.com/p/1bd1f3ebed60">
+  <meta property="og:description" content="前言 稍微看过Android FrameWork层的人应该都知道Binder，因为app与系统服务之间的通信基本上都是建立在Binder的基础上。之前对Binder也是云里雾里，似懂非懂，于是花...">
+  <!-- End -->
+
+  <!--  Meta for Facebook Applinks -->
+  <meta property="al:ios:url" content="jianshu://notes/5730195">
+  <meta property="al:ios:app_store_id" content="888237539">
+  <meta property="al:ios:app_name" content="简书">
+
+  <meta property="al:android:url" content="jianshu://notes/5730195">
+  <meta property="al:android:package" content="com.jianshu.haruki">
+  <meta property="al:android:app_name" content="简书">
+  <!-- End -->
+
+  <title>Android Binder解密 - 简书</title>
+  <meta name="csrf-param" content="authenticity_token">
+<meta name="csrf-token" content="+ctwshMDXV42/je9Y75oW1/TPrDKECaTWf/4wQyYELfHwuWb2z1JdlQHiloZNgLJZOxf/Dksa9qQPXbZ/qRDVQ==">
+  <!--[if lte IE 8]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" media="all" href="./Android Binder解密 - 简书_files/base-88532283c1753e2fb6401b243f64bdae.css">
+
+    <link rel="stylesheet" media="all" href="./Android Binder解密 - 简书_files/reading-note-cf8cd3159d6a16989a79274ab0963d55.css">
+  <link rel="stylesheet" media="all" href="./Android Binder解密 - 简书_files/base-read-mode-3e5c28835a56213ba914be4b318b58a8.css">
+  <script src="./Android Binder解密 - 简书_files/modernizr-613ea63b5aa2f0e2a1946e9c28c8eedb.js"></script>
+  <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+  <!--[if IE 8]><link rel="stylesheet" media="all" href="http://cdn-qn0.jianshu.io/assets/scaffolding/for_ie-7f1c477ffedc13c11315103e8787dc6c.css" /><![endif]-->
+  <!--[if lt IE 9]><link rel="stylesheet" media="all" href="http://cdn-qn0.jianshu.io/assets/scaffolding/for_ie-7f1c477ffedc13c11315103e8787dc6c.css" /><![endif]-->
+  <link href="http://baijii-common.b0.upaiyun.com/icons/favicon.ico" rel="icon">
+      <link rel="apple-touch-icon-precomposed" href="http://cdn-qn0.jianshu.io/assets/apple-touch-icons/57-b426758a1fcfb30486f20fd073c3b8ec.png" sizes="57x57">
+      <link rel="apple-touch-icon-precomposed" href="http://cdn-qn0.jianshu.io/assets/apple-touch-icons/72-feca4b183b9d29fd188665785dc7a7f1.png" sizes="72x72">
+      <link rel="apple-touch-icon-precomposed" href="http://cdn-qn0.jianshu.io/assets/apple-touch-icons/76-ba757f1ad3421192ce7192170393d2b0.png" sizes="76x76">
+      <link rel="apple-touch-icon-precomposed" href="./Android Binder解密 - 简书_files/114-8dae53b3bcea3f06bb139e329d1edab3.png" sizes="114x114">
+      <link rel="apple-touch-icon-precomposed" href="http://cdn-qn0.jianshu.io/assets/apple-touch-icons/120-fa315ee0177dba4c55d4f66d4129b47f.png" sizes="120x120">
+      <link rel="apple-touch-icon-precomposed" href="http://cdn-qn0.jianshu.io/assets/apple-touch-icons/152-052f5799bec8fb3aa624bdc72ef5bd1d.png" sizes="152x152">
+
+    <meta id="current_user_id" value="2096107">
+    <meta id="current_user_slug" value="2c0766c16f96">
+<style type="text/css"></style></head>
+
+<body class="post output zh cn win reader-day-mode reader-font2 " data-js-module="note-show" data-locale="zh-CN">
+  
+  <div class="navbar navbar-jianshu shrink">
+  <div class="dropdown">
+    <a class="dropdown-toggle logo" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0)">
+      简
+    </a>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+      <li><a href="http://www.jianshu.com/"><i class="fa fa-home"></i> 首页</a></li>
+      <li><a href="http://www.jianshu.com/collections"><i class="fa fa-th"></i> 专题</a></li>
+      <li><a href="http://www.jianshu.com/user_invitations"><i class="fa fa-money"></i> 发钱啦</a></li>
+        <li><a href="http://www.jianshu.com/timeline"><i class="fa fa-users"></i> 简友圈</a></li>
+        <li><a href="http://www.jianshu.com/writer#/"><i class="fa fa-pencil"></i> 写文章</a></li>
+    </ul>
+  </div>
+</div>
+<div class="navbar-user">
+    <a class="user avatar" data-toggle="dropdown" href="javascript:void(0)">
+      <img src="./Android Binder解密 - 简书_files/52270422fd48.jpg" alt="100"> <b class="caret"></b>
+</a>    <ul class="dropdown-menu arrow-top" role="menu" aria-labelledby="dLabel">
+      <li>
+  <a href="http://www.jianshu.com/writer#/"><i class="fa fa-pencil"></i> 写文章</a>
+</li>
+<li>
+  <a target="_blank" href="http://www.jianshu.com/users/2c0766c16f96"><i class="fa fa-user"></i> 我的主页</a>
+</li>
+  <li>
+    <a href="http://www.jianshu.com/favourites">
+      <i class="fa fa-heart"></i> 我喜欢的
+</a>  </li>
+  <li>
+    <a href="http://www.jianshu.com/bookmarks">
+      <i class="fa fa-bookmark"></i> 我的收藏
+</a>  </li>
+  <li>
+    <a href="http://www.jianshu.com/notifications">
+      <i class="fa fa-bell"></i> 提醒
+</a>  </li>
+  <li>
+    <a href="http://www.jianshu.com/chats">
+      <i class="fa fa-envelope"></i> 简信
+</a>  </li>
+  <li><a href="http://www.jianshu.com/settings"><i class="fa fa-cogs"></i> 设置</a></li>
+  <li>
+    <a href="http://www.jianshu.com/wallet">
+      <i class="fa fa-credit-card"></i> 钱包
+</a>  </li>
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="http://www.jianshu.com/p/1bd1f3ebed60#"><i class="fa fa-question-circle"></i> 帮助</a>
+    <ul class="dropdown-menu">
+      <li><a href="http://www.jianshu.com/notebooks/547/latest" target="_blank">帮助中心</a></li>
+      <li><a target="_blank" href="http://www.jianshu.com/contact">联系我们</a></li>
+    </ul>
+  </li>
+  <li>
+    <a rel="nofollow" data-method="DELETE" href="http://www.jianshu.com/sign_out">
+      <i class="fa fa-sign-out"></i> 登 出
+</a>  </li>
+
+    </ul>
+    <a class="daytime set-view-mode pull-right" href="javascript:void(0)"><i class="fa fa-moon-o"></i></a>
+</div>
+<div class="navbar navbar-jianshu expanded">
+  <div class="dropdown">
+      <a class="active logo" role="button" data-original-title="个人主页" data-container="div.expanded" href="http://www.jianshu.com/">
+        <b>简</b><i class="fa fa-home"></i><span class="title">首页</span>
+</a>      <a data-toggle="tooltip" data-placement="right" data-original-title="专题" data-container="div.expanded" href="http://www.jianshu.com/collections">
+        <i class="fa fa-th"></i><span class="title">专题</span>
+</a>        <a data-toggle="tooltip" data-placement="right" data-original-title="简友圈" data-container="div.expanded" href="http://www.jianshu.com/timeline">
+          <i class="fa fa-users"></i><span class="title">简友圈</span>
+</a>        <a data-toggle="tooltip" data-placement="right" data-original-title="写文章" data-container="div.expanded" href="http://www.jianshu.com/writer#/">
+          <i class="fa fa-pencil"></i><span class="title">写文章</span>
+</a>    <a class="ad-selector" href="http://www.jianshu.com/apps">
+      <i class="fa fa-mobile"></i><span class="title">下载手机应用</span>
+</a>    <div class="ad-container ad-container-signed">
+      <div class="ad-pop">
+        <img class="ad-logo" src="./Android Binder解密 - 简书_files/114-8dae53b3bcea3f06bb139e329d1edab3.png" alt="114">
+        <p class="ad-title">简书</p>
+        <p class="ad-subtitle">交流故事，沟通想法</p>
+        <img class="ad-qrcode" src="./Android Binder解密 - 简书_files/download-app-qrcode-053849fa25f9b44573ef8dd3c118a20f.png" alt="Download app qrcode">
+        <div>
+          <a class="ad-link" href="https://itunes.apple.com/cn/app/jian-shu/id888237539?ls=1&amp;mt=8">iOS</a>·
+          <a class="ad-link" href="http://downloads.jianshu.io/apps/haruki/JianShu-1.11.2.apk">Android</a>
+        </div>
+      </div> 
+    </div>
+  </div>
+  <div class="nav-user">
+      <a data-toggle="tooltip" data-placement="right" data-original-title="我的主页" data-container="div.expanded" href="http://www.jianshu.com/users/2c0766c16f96">
+        <i class="fa fa-user"></i><span class="title">我的主页</span>
+</a>
+        <a data-toggle="tooltip" data-placement="right" data-original-title="我的收藏" data-container="div.expanded" href="http://www.jianshu.com/bookmarks">
+          <i class="fa fa-bookmark"></i><span class="title">我的收藏</span>
+</a>
+        <a data-toggle="tooltip" data-placement="right" data-original-title="提醒" data-container="div.expanded" href="http://www.jianshu.com/notifications">
+
+          <i id="notify-icon" class="fa fa-bell"></i><span class="title">提醒</span>
+</a>
+        <a data-toggle="tooltip" data-placement="right" data-original-title="简信" data-container="div.expanded" href="http://www.jianshu.com/chats">
+            <i id="chat-message-icon" class="fa fa-envelope"></i><span class="title">简信</span>
+</a>
+        <a href="http://www.jianshu.com/p/1bd1f3ebed60#view-mode-modal" data-toggle="modal"><i class="fa fa-font"></i><span class="title">显示模式</span></a>
+
+        <a data-toggle="tooltip" data-placement="right" data-original-title="设置" data-container="div.expanded" href="http://www.jianshu.com/settings">
+          <i class="fa fa-cogs"></i><span class="title">设置</span>
+</a>
+        <a data-toggle="tooltip" data-placement="right" data-original-title="登 出" data-container="div.expanded" rel="nofollow" data-method="delete" href="http://www.jianshu.com/sign_out">
+          <i class="fa fa-sign-out"></i><span class="title">登 出</span>
+</a>
+          </div>
+  </div>
+
+  
+    <div class="fixed-btn">
+    <a class="go-top hide-go-top" href="http://www.jianshu.com/p/1bd1f3ebed60#"> <i class="fa fa-angle-up"></i></a>
+    <a class="qrcode" data-target="#bottom-qrcode" data-toggle="modal" href="javascript:void(0)"><i class="fa fa-qrcode"></i></a>
+    <a class="writer" href="http://www.jianshu.com/writer#/" data-toggle="tooltip" data-placement="left" title="" data-original-title="写篇文章"><i class="fa fa-pencil"></i></a>
+    <!-- qrcode modal -->
+    <div id="bottom-qrcode" class="modal panel-modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <h4>下载简书移动应用</h4>
+      <div class="panel-body"><img src="./Android Binder解密 - 简书_files/download-app-qrcode-053849fa25f9b44573ef8dd3c118a20f.png" alt="Download app qrcode"></div>
+    </div>
+  </div>
+
+
+  <div id="show-note-container" class="imagebubble-container imagebubble-mode-off">
+    
+<div class="post-bg" id="flag">
+  <div class="wrap-btn" style="top: -1px;">
+    <!-- Notebook and collections button upper left -->
+      <div class="article-related pull-left">
+          <a class="collection-menu-btn" data-toggle="modal" data-target="#collection-menu" href="javascript:void(null);">
+            <i class="fa fa-th"></i>
+</a>          <a class="notebooks-menu-btn" data-toggle="modal" data-target="#notebooks-menu" href="javascript:void(null);"><i class="fa fa-list-ul"></i></a>
+        <div class="related-avatar-group activities"></div>
+      </div>
+    <!-- ******* -->
+
+      <a class="user avatar" data-toggle="dropdown" href="javascript:void(0)">
+    <img src="./Android Binder解密 - 简书_files/52270422fd48.jpg" alt="100"> <b class="caret"></b>
+</a>  <ul class="dropdown-menu arrow-top" role="menu" aria-labelledby="dLabel">
+    <li>
+  <a href="http://www.jianshu.com/writer#/"><i class="fa fa-pencil"></i> 写文章</a>
+</li>
+<li>
+  <a target="_blank" href="http://www.jianshu.com/users/2c0766c16f96"><i class="fa fa-user"></i> 我的主页</a>
+</li>
+  <li>
+    <a href="http://www.jianshu.com/favourites">
+      <i class="fa fa-heart"></i> 我喜欢的
+</a>  </li>
+  <li>
+    <a href="http://www.jianshu.com/bookmarks">
+      <i class="fa fa-bookmark"></i> 我的收藏
+</a>  </li>
+  <li>
+    <a href="http://www.jianshu.com/notifications">
+      <i class="fa fa-bell"></i> 提醒
+</a>  </li>
+  <li>
+    <a href="http://www.jianshu.com/chats">
+      <i class="fa fa-envelope"></i> 简信
+</a>  </li>
+  <li><a href="http://www.jianshu.com/settings"><i class="fa fa-cogs"></i> 设置</a></li>
+  <li>
+    <a href="http://www.jianshu.com/wallet">
+      <i class="fa fa-credit-card"></i> 钱包
+</a>  </li>
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="http://www.jianshu.com/p/1bd1f3ebed60#"><i class="fa fa-question-circle"></i> 帮助</a>
+    <ul class="dropdown-menu">
+      <li><a href="http://www.jianshu.com/notebooks/547/latest" target="_blank">帮助中心</a></li>
+      <li><a target="_blank" href="http://www.jianshu.com/contact">联系我们</a></li>
+    </ul>
+  </li>
+  <li>
+    <a rel="nofollow" data-method="DELETE" href="http://www.jianshu.com/sign_out">
+      <i class="fa fa-sign-out"></i> 登 出
+</a>  </li>
+
+  </ul>
+
+
+    <!-- Buttons upper right -->
+      <div class="btn-group editor-article">
+                  <a class="daytime set-view-mode" href="javascript:void(0)"><i class="fa fa-moon-o"></i></a>
+        <span>
+          
+          
+          
+
+            <a data-type="json" data-mcomponent="easy-bookmark" class="bookmark" data-remote="true" rel="nofollow" data-method="post" href="http://www.jianshu.com/notes/5730195/bookmark" data-original-title="" title="">
+    <i class="fa fa-bookmark-o"></i><span>收藏文章</span>
+</a>
+        <a href="javascript:void(null)" data-toggle="dropdown" id="top-share-button" data-original-title="" title=""><i class="fa fa-share-square-o"></i></a><ul class="dropdown-menu top-share-dropdown arrow-top"><li><a data-toggle="modal" href="http://www.jianshu.com/p/1bd1f3ebed60#share-weixin-modal"><img src="./Android Binder解密 - 简书_files/weixin.png"> 分享到微信</a></li><li><a href="javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f=&#39;http://v.t.sina.com.cn/share/share.php?appkey=1881139527&#39;,u=z||d.location,p=[&#39;&amp;url=&#39;,e(u),&#39;&amp;title=&#39;,e(t||d.title),&#39;&amp;source=&#39;,e(r),&#39;&amp;sourceUrl=&#39;,e(l),&#39;&amp;content=&#39;,c||&#39;gb2312&#39;,&#39;&amp;pic=&#39;,e(p||&#39;&#39;)].join(&#39;&#39;);function%20a(){if(!window.open([f,p].join(&#39;&#39;),&#39;mb&#39;,[&#39;toolbar=0,status=0,resizable=1,width=440,height=430,left=&#39;,(s.width-440)/2,&#39;,top=&#39;,(s.height-430)/2].join(&#39;&#39;)))u.href=[f,p].join(&#39;&#39;);};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,&#39;&#39;,&#39;&#39;,&#39;http://cwb.assets.jianshu.io/notes/images/5730195/weibo/image_e9f4f97e0019.jpg&#39;, &#39;推荐 半栈工程师 的文章《Android Binder解密》（ 分享自 @简书 ）&#39;,&#39;http://www.jianshu.com/p/1bd1f3ebed60&#39;,&#39;页面编码gb2312|utf-8默认gb2312&#39;));"><img src="./Android Binder解密 - 简书_files/weibo.png"> 分享到微博</a></li><li><a href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;http://share.v.t.qq.com/index.php?c=share&amp;a=index&amp;url=&#39;+e(&#39;http://www.jianshu.com/p/1bd1f3ebed60&#39;)+&#39;&amp;title=&#39;+e(&#39;推荐 半栈工程师 的文章《Android Binder解密》（ 分享自 @jianshuio ）&#39;),x=function(){if(!window.open(r,&#39;tweibo&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();"><img src="./Android Binder解密 - 简书_files/tweibo.png"> 分享到腾讯微博</a></li><li><a href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=&#39;+e(&#39;http://www.jianshu.com/p/1bd1f3ebed60&#39;)+&#39;&amp;title=&#39;+e(&#39;推荐 半栈工程师 的文章《Android Binder解密》&#39;),x=function(){if(!window.open(r,&#39;qzone&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();"><img src="./Android Binder解密 - 简书_files/qzone.png"> 分享到QQ空间</a></li><li><a href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://twitter.com/share?url=&#39;+e(&#39;http://www.jianshu.com/p/1bd1f3ebed60&#39;)+&#39;&amp;text=&#39;+e(&#39;推荐 半栈工程师 的文章《Android Binder解密》（ 分享自 @jianshucom ）&#39;)+&#39;&amp;related=&#39;+e(&#39;jianshucom&#39;),x=function(){if(!window.open(r,&#39;twitter&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();"><img src="./Android Binder解密 - 简书_files/twitter.png"> 分享到Twitter</a></li><li><a href="javascript:void(function(){var d=document,e=encodeURIComponent,s1=window.getSelection,s2=d.getSelection,s3=d.selection,s=s1?s1():s2?s2():s3?s3.createRange().text:&#39;&#39;,r=&#39;http://www.douban.com/recommend/?url=&#39;+e(&#39;http://www.jianshu.com/p/1bd1f3ebed60&#39;)+&#39;&amp;title=&#39;+e(&#39;Android Binder解密&#39;)+&#39;&amp;sel=&#39;+e(s)+&#39;&amp;v=1&#39;,x=function(){if(!window.open(r,&#39;douban&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r+&#39;&amp;r=1&#39;};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})()"><img src="./Android Binder解密 - 简书_files/douban.png"> 分享到豆瓣</a></li><li><a href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://www.facebook.com/dialog/share?app_id=483126645039390&amp;display=popup&amp;href=http://www.jianshu.com/p/1bd1f3ebed60&#39;,x=function(){if(!window.open(r,&#39;facebook&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();"><img src="./Android Binder解密 - 简书_files/facebook.png"> 分享到Facebook</a></li><li><a href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://plus.google.com/share?url=&#39;+e(&#39;http://www.jianshu.com/p/1bd1f3ebed60&#39;),x=function(){if(!window.open(r,&#39;google_plus&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();"><img src="./Android Binder解密 - 简书_files/google_plus.png"> 分享到Google+</a></li><li><a href="http://cwb.assets.jianshu.io/notes/images/5730195/weibo/image_e9f4f97e0019.jpg" target="_blank"><i class="fa fa-arrow-circle-o-down"></i>下载长微博图片</a></li></ul></span>
+      </div>
+    <!-- ******* -->
+  </div>
+
+  <div class="container">
+    <!-- Article activities for width under 768px -->
+    <div class="related-avatar-group activities"></div>
+      <div class="article">
+        <div class="preview">
+          <div class="author-info">
+              <div class="btn btn-small btn-success follow" id="follow_user_2819184">
+    <a data-type="json" data-user-slug="de53c0ce96ab" data-remote="true" rel="nofollow" data-method="post" href="http://www.jianshu.com/users/de53c0ce96ab/toggle_like"><i class="fa fa-plus"></i>  <span>添加关注</span></a>
+  </div>
+
+            <a class="avatar" href="http://www.jianshu.com/users/de53c0ce96ab">
+              <img src="./Android Binder解密 - 简书_files/328930572d41.jpeg" alt="100">
+</a>            <span class="label">
+                作者
+            </span>
+            <a class="author-name blue-link" href="http://www.jianshu.com/users/de53c0ce96ab">
+              <span>半栈工程师</span>
+</a>              <span data-toggle="tooltip" data-original-title="最后编辑于 2016.09.11 11:39">2016.09.10 21:48*</span>
+            <div>
+              <span>写了6714字</span>，<span>被23人关注</span>，<span>获得了30个喜欢</span>
+            </div>
+          </div>
+          <h1 class="title">Android Binder解密</h1>
+          <div class="meta-top">
+            <span class="wordage">字数3506</span>
+            <span class="views-count">阅读928</span>
+            <span class="comments-count">评论4</span>
+            <span class="likes-count">喜欢19</span>
+          </div>
+
+          <!-- Collection/Bookmark/Share for width under 768px -->
+          <div class="article-share"></div>
+          <!-- -->
+
+          <div class="show-content"><h2>前言</h2>
+<p>稍微看过Android FrameWork层的人应该都知道Binder，因为app与系统服务之间的通信基本上都是建立在Binder的基础上。之前对Binder也是云里雾里，似懂非懂，于是花了不少时间，看了很多资料和源码，才大致了解了Binder通信的原理，总结出来，如有错误，还望指正。</p>
+<h2>简介</h2>
+<p>Binder是什么？Binder是为跨进程通信而生的产物。众所周知，我们的app都是由Zygote进程fork出来的，每个app都运行在单独的进程中，一个app想与另外一个app进行通信，只能采用跨进程的方式，传统的Linux跨进程方式有如下几种：管道、信号量、共享内存及Socket等，Android系统建立在Linux的基础上，但其采用的是Binder来进行IPC的。</p>
+<p>接下来让我们用一个小Demo展示一下如何用Binder进行跨进程通信。</p>
+<h2>实例</h2>
+<p>既然是跨进程通信，那么至少得有两个进程，最简单的方式就是指定activity的process属性，但是本文为了更清楚的讲解binder，采用的方式是建立两个app，一个作为服务端，一个作为客户端。服务端提供一个简单的生词本功能，客户端可以向服务端插入和查询生词。<br>使用Binder通信主要有以下几个步骤：</p>
+<h3>Step1:编写AIDL文件</h3>
+<p>想要使用Binder，必须要先了解AIDL(Android Interface Definition Language)，也就是接口定义语言，提供接口给远程调用者。<br>为了给客户端提供生词本的调用接口，我们在/src/main目录下先新建一个文件夹aidl,并新建一个aidl文件IDictionaryManager.aidl。</p>
+<pre class="hljs java"><code class="java"><span class="hljs-comment">// IDictionaryManager.aidl</span>
+<span class="hljs-keyword">package</span> com.wanginbeijing.dictionaryserver;
+
+<span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">IDictionaryManager</span> </span>{
+      <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">add</span><span class="hljs-params">(String chinese,String english)</span></span>;
+    <span class="hljs-function">String <span class="hljs-title">query</span><span class="hljs-params">(String chinese)</span></span>;
+}</code></pre>
+<p>接口中提供了两个方法：add()和query()，分别作为插入和查询操作。Build一下工程，android studio会自动为我们生成一个java类：IDictionaryManager.java。<br></p><div class="image-package imagebubble" widget="ImageBubble">
+<img src="./Android Binder解密 - 简书_files/2819184-40b99b80af17ee26.png" data-original-src="http://upload-images.jianshu.io/upload_images/2819184-40b99b80af17ee26.png?imageMogr2/auto-orient/strip%7CimageView2/2" class="imagebubble-image"><br><div class="image-caption"></div>
+</div>
+<p>我们来看看这个java类里面都写了什么</p>
+<pre class="hljs java"><code class="java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">IDictionaryManager</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">android</span>.<span class="hljs-title">os</span>.<span class="hljs-title">IInterface</span> </span>{
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Stub</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">android</span>.<span class="hljs-title">os</span>.<span class="hljs-title">Binder</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">com</span>.<span class="hljs-title">wanginbeijing</span>.<span class="hljs-title">dictionaryserver</span>.<span class="hljs-title">IDictionaryManager</span> </span>{
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> java.lang.String DESCRIPTOR = <span class="hljs-string">"com.wanginbeijing.dictionaryserver.IDictionaryManager"</span>;
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Stub</span><span class="hljs-params">()</span> </span>{
+            <span class="hljs-keyword">this</span>.attachInterface(<span class="hljs-keyword">this</span>, DESCRIPTOR);
+        }
+
+
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> com.wanginbeijing.dictionaryserver.<span class="hljs-function">IDictionaryManager <span class="hljs-title">asInterface</span><span class="hljs-params">(android.os.IBinder obj)</span> </span>{
+            <span class="hljs-keyword">if</span> ((obj == <span class="hljs-keyword">null</span>)) {
+                <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+            }
+            android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);
+            <span class="hljs-keyword">if</span> (((iin != <span class="hljs-keyword">null</span>) &amp;&amp; (iin <span class="hljs-keyword">instanceof</span> com.wanginbeijing.dictionaryserver.IDictionaryManager))) {
+                <span class="hljs-keyword">return</span> ((com.wanginbeijing.dictionaryserver.IDictionaryManager) iin);
+            }
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> com.wanginbeijing.dictionaryserver.IDictionaryManager.Stub.Proxy(obj);
+        }
+
+        <span class="hljs-annotation">@Override</span>
+        <span class="hljs-keyword">public</span> android.os.<span class="hljs-function">IBinder <span class="hljs-title">asBinder</span><span class="hljs-params">()</span> </span>{
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+        }
+
+        <span class="hljs-annotation">@Override</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">onTransact</span><span class="hljs-params">(<span class="hljs-keyword">int</span> code, android.os.Parcel data, android.os.Parcel reply, <span class="hljs-keyword">int</span> flags)</span> <span class="hljs-keyword">throws</span> android.os.RemoteException </span>{
+            <span class="hljs-keyword">switch</span> (code) {
+                <span class="hljs-keyword">case</span> INTERFACE_TRANSACTION: {
+                    reply.writeString(DESCRIPTOR);
+                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+                }
+                <span class="hljs-keyword">case</span> TRANSACTION_add: {
+                    data.enforceInterface(DESCRIPTOR);
+                    java.lang.String _arg0;
+                    _arg0 = data.readString();
+                    java.lang.String _arg1;
+                    _arg1 = data.readString();
+                    <span class="hljs-keyword">this</span>.add(_arg0, _arg1);
+                    reply.writeNoException();
+                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+                }
+            <span class="hljs-keyword">case</span> TRANSACTION_query: {
+                    data.enforceInterface(DESCRIPTOR);
+                    java.lang.String _arg0;
+                    _arg0 = data.readString();
+                    java.lang.String _result = <span class="hljs-keyword">this</span>.query(_arg0);
+                    reply.writeNoException();
+                    reply.writeString(_result);
+                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+                }
+            }
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.onTransact(code, data, reply, flags);
+        }
+
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Proxy</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">com</span>.<span class="hljs-title">wanginbeijing</span>.<span class="hljs-title">dictionaryserver</span>.<span class="hljs-title">IDictionaryManager</span> </span>{
+            <span class="hljs-keyword">private</span> android.os.IBinder mRemote;
+
+            Proxy(android.os.IBinder remote) {
+                mRemote = remote;
+            }
+
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-keyword">public</span> android.os.<span class="hljs-function">IBinder <span class="hljs-title">asBinder</span><span class="hljs-params">()</span> </span>{
+                <span class="hljs-keyword">return</span> mRemote;
+            }
+
+            <span class="hljs-keyword">public</span> java.lang.<span class="hljs-function">String <span class="hljs-title">getInterfaceDescriptor</span><span class="hljs-params">()</span> </span>{
+                <span class="hljs-keyword">return</span> DESCRIPTOR;
+            }
+
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">add</span><span class="hljs-params">(java.lang.String chinese, java.lang.String english)</span> <span class="hljs-keyword">throws</span> android.os.RemoteException </span>{
+                android.os.Parcel _data = android.os.Parcel.obtain();
+                android.os.Parcel _reply = android.os.Parcel.obtain();
+                <span class="hljs-keyword">try</span> {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(chinese);
+                    _data.writeString(english);
+                    mRemote.transact(Stub.TRANSACTION_add, _data, _reply, <span class="hljs-number">0</span>);
+                    _reply.readException();
+                } <span class="hljs-keyword">finally</span> {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
+
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-keyword">public</span> java.lang.<span class="hljs-function">String <span class="hljs-title">query</span><span class="hljs-params">(java.lang.String chinese)</span> <span class="hljs-keyword">throws</span> android.os.RemoteException </span>{
+                android.os.Parcel _data = android.os.Parcel.obtain();
+                android.os.Parcel _reply = android.os.Parcel.obtain();
+                java.lang.String _result;
+                <span class="hljs-keyword">try</span> {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(chinese);
+                    mRemote.transact(Stub.TRANSACTION_query, _data, _reply, <span class="hljs-number">0</span>);
+                    _reply.readException();
+                    _result = _reply.readString();
+                } <span class="hljs-keyword">finally</span> {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+                <span class="hljs-keyword">return</span> _result;
+            }
+        }
+
+        <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> TRANSACTION_add = (android.os.IBinder.FIRST_CALL_TRANSACTION + <span class="hljs-number">0</span>);
+        <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> TRANSACTION_query = (android.os.IBinder.FIRST_CALL_TRANSACTION + <span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">add</span><span class="hljs-params">(java.lang.String chinese, java.lang.String english)</span> <span class="hljs-keyword">throws</span> android.os.RemoteException</span>;
+
+    <span class="hljs-keyword">public</span> java.lang.<span class="hljs-function">String <span class="hljs-title">query</span><span class="hljs-params">(java.lang.String chinese)</span> <span class="hljs-keyword">throws</span> android.os.RemoteException</span>;
+}</code></pre>
+<p>这个接口类比较长，继承了android.os.IInterface这个接口。这个类简化的结构大致如下：</p>
+<pre class="hljs java"><code class="java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">IDictionaryManager</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">android</span>.<span class="hljs-title">os</span>.<span class="hljs-title">IInterface</span> </span>{
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Stub</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">android</span>.<span class="hljs-title">os</span>.<span class="hljs-title">Binder</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">com</span>.<span class="hljs-title">wanginbeijing</span>.<span class="hljs-title">dictionaryserver</span>.<span class="hljs-title">IDictionaryManager</span> </span>{
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Stub</span><span class="hljs-params">()</span> </span>{
+            <span class="hljs-keyword">this</span>.attachInterface(<span class="hljs-keyword">this</span>, DESCRIPTOR);
+        }
+
+
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> com.wanginbeijing.dictionaryserver.<span class="hljs-function">IDictionaryManager <span class="hljs-title">asInterface</span><span class="hljs-params">(android.os.IBinder obj)</span> 
+
+        @Override
+        <span class="hljs-keyword">public</span> android.os.IBinder <span class="hljs-title">asBinder</span><span class="hljs-params">()</span> 
+
+        @Override
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">onTransact</span><span class="hljs-params">(<span class="hljs-keyword">int</span> code, android.os.Parcel data, android.os.Parcel reply, <span class="hljs-keyword">int</span> flags)</span>
+
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> class Proxy implements com.wanginbeijing.dictionaryserver.IDictionaryManager </span>{
+            <span class="hljs-keyword">private</span> android.os.IBinder mRemote;
+
+            Proxy(android.os.IBinder remote)
+
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-keyword">public</span> android.os.<span class="hljs-function">IBinder <span class="hljs-title">asBinder</span><span class="hljs-params">()</span> 
+
+            <span class="hljs-keyword">public</span> java.lang.String <span class="hljs-title">getInterfaceDescriptor</span><span class="hljs-params">()</span> 
+
+            @Override
+            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">add</span><span class="hljs-params">(java.lang.String chinese, java.lang.String english)</span>
+
+            @Override
+            <span class="hljs-keyword">public</span> java.lang.String <span class="hljs-title">query</span><span class="hljs-params">(java.lang.String chinese)</span>  
+      }
+
+        <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> TRANSACTION_add </span>= (android.os.IBinder.FIRST_CALL_TRANSACTION + <span class="hljs-number">0</span>);
+        <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> TRANSACTION_query = (android.os.IBinder.FIRST_CALL_TRANSACTION + <span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">add</span><span class="hljs-params">(java.lang.String chinese, java.lang.String english)</span> 
+
+    <span class="hljs-keyword">public</span> java.lang.String <span class="hljs-title">query</span><span class="hljs-params">(java.lang.String chinese)</span>
+}</span></code></pre>
+<p>该类首先包含了一个抽象内部类：Stub, 该类继承自Binder并实现了IDictionary接口。在Stub的内部，又包含了一个静态内部类：Proxy，Proxy类同样实现了IDictionary接口。</p>
+<h3>Step2:定义一个Service，用于客户端连接</h3>
+<pre class="hljs scala"><code class="scala">public <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DictionaryManagerService</span> <span class="hljs-keyword"><span class="hljs-keyword">extends</span></span> <span class="hljs-title">Service</span> {</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-type">Map</span>&lt;<span class="hljs-type">String</span>, <span class="hljs-type">String</span>&gt; mMap = <span class="hljs-keyword">new</span> <span class="hljs-type">HashMap</span>&lt;&gt;();
+
+    <span class="hljs-annotation">@Nullable</span>
+    <span class="hljs-annotation">@Override</span>
+    public <span class="hljs-type">IBinder</span> onBind(<span class="hljs-type">Intent</span> intent) {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-type">IDictionaryManager</span>.<span class="hljs-type">Stub</span>() {
+            <span class="hljs-annotation">@Override</span>
+            public void add(<span class="hljs-type">String</span> chinese, <span class="hljs-type">String</span> english) <span class="hljs-keyword">throws</span> <span class="hljs-type">RemoteException</span> {
+                mMap.put(chinese, english);
+                <span class="hljs-type">Log</span>.e(<span class="hljs-string">"DictionaryManager"</span>, <span class="hljs-string">"add new word"</span>);
+            }
+
+            <span class="hljs-annotation">@Override</span>
+            public <span class="hljs-type">String</span> query(<span class="hljs-type">String</span> chinese) <span class="hljs-keyword">throws</span> <span class="hljs-type">RemoteException</span> {
+                <span class="hljs-keyword">return</span> mMap.get(chinese);
+            }
+        };
+    }
+}</code></pre>
+<p>该类中定义了一个HashMap用来保存生词，并重写了Service中的onBind方法，在onBinder方法中，返回了一个继承自IDictionaryManager.Stub的匿名内部类，并重写了IDictionaryManager接口中add和query方法，实现真正的生词本业务逻辑。</p>
+<h3>Step3:客户端连接服务端Service</h3>
+<p>客户端要调用服务端接口，先要将服务端定义好的aidl文件拷贝到客户端相同目录下，并build生成java文件。然后开始连接服务器端：</p>
+<pre class="hljs java"><code class="java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainActivity</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Activity</span> </span>{
+
+    <span class="hljs-keyword">private</span> IDictionaryManager mDictionaryManager;
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onCreate</span><span class="hljs-params">(Bundle savedInstanceState)</span> </span>{
+        <span class="hljs-keyword">super</span>.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Intent intent = <span class="hljs-keyword">new</span> Intent();
+        intent.setAction(<span class="hljs-string">"android.intent.action.DictionaryManagerService"</span>);
+        intent.setPackage(<span class="hljs-string">"com.wanginbeijing.dictionaryserver"</span>);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        <span class="hljs-comment">//添加一个新单词</span>
+        findViewById(R.id.btn_add).setOnClickListener(<span class="hljs-keyword">new</span> View.OnClickListener() {
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onClick</span><span class="hljs-params">(View view)</span> </span>{
+                <span class="hljs-keyword">try</span> {
+                    mDictionaryManager.add(<span class="hljs-string">"你好"</span>, <span class="hljs-string">"Hello"</span>);
+                } <span class="hljs-keyword">catch</span> (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        <span class="hljs-comment">//查询单词</span>
+        findViewById(R.id.btn_query).setOnClickListener(<span class="hljs-keyword">new</span> View.OnClickListener() {
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onClick</span><span class="hljs-params">(View view)</span> </span>{
+                <span class="hljs-keyword">try</span> {
+                    String english = mDictionaryManager.query(<span class="hljs-string">"你好"</span>);
+                    Toast.makeText(MainActivity.<span class="hljs-keyword">this</span>, english, Toast.LENGTH_SHORT).show();
+                } <span class="hljs-keyword">catch</span> (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    <span class="hljs-keyword">private</span> ServiceConnection mConnection = <span class="hljs-keyword">new</span> ServiceConnection() {
+        <span class="hljs-annotation">@Override</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onServiceConnected</span><span class="hljs-params">(ComponentName componentName, IBinder iBinder)</span> </span>{
+            IDictionaryManager dictionaryManager = IDictionaryManager.Stub.asInterface(iBinder);
+            <span class="hljs-keyword">try</span> {
+                mDictionaryManager = dictionaryManager;
+                Toast.makeText(MainActivity.<span class="hljs-keyword">this</span>, <span class="hljs-string">"connect success"</span>, Toast.LENGTH_SHORT).show();
+            } <span class="hljs-keyword">catch</span> (Exception e) {
+                Toast.makeText(MainActivity.<span class="hljs-keyword">this</span>, <span class="hljs-string">"connect failed"</span>, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+
+        <span class="hljs-annotation">@Override</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onServiceDisconnected</span><span class="hljs-params">(ComponentName name)</span> </span>{
+        }
+    };
+}</code></pre>
+<p>客户端的MainActivty的onCreate()方法中，首先自动连接远程service，拿到远程service传回的Binder对象后，强转为IDictionaryService类型的变量mDictionaryManager。然后在add按钮和query按钮的监听事件中分别添加和查询单词（你好，Hello）。下面展示一下操作Demo.<br></p><div class="image-package imagebubble" widget="ImageBubble">
+<img src="./Android Binder解密 - 简书_files/2819184-9e09b10d23b1cf54.gif" data-original-src="http://upload-images.jianshu.io/upload_images/2819184-9e09b10d23b1cf54.gif?imageMogr2/auto-orient/strip" class="imagebubble-image"><br><div class="image-caption"></div>
+</div><p><br>可以看见，在连接远端service成功后，首先点击add按钮插入单词，接着调用query接口，可以成功查询到刚刚插入的单词。</p>
+<p>以上就是使用Binder进行IPC的主要过程，但是仅仅掌握了使用方法怎么能满足我们的好奇心呢，我们还必须要挖挖它的原理。</p>
+<h2>原理</h2>
+<h3>java层</h3>
+<p>说到原理，还得先从代码看起，回到上述所说的Android Studio自动生成的那个java类:IDictionaryManager。刚才已经说过，该类中有一个继承自Binder的Stub类，它实现了我们所需要的IDictionaryManager接口。我们先来看看它的几个方法：</p>
+<pre class="hljs lisp"><code class="lisp">public static IDictionaryManager asInterface<span class="hljs-list">(<span class="hljs-keyword">IBinder</span> obj)</span></code></pre>
+<p>这方法将一个IBinder对象转换成实现了IDictionaryManager。如果请求调用的客户端在同一进程，就直接返回Stub对象本身，如果不在同一进程，就返回Stub类中的Proxy对象。Proxy类同样实现了IDictionaryManager接口。</p>
+<pre class="hljs undefined"><code>asBinder</code></pre>
+<p>这个方法很简单，就直接返回了Stub对象自己。</p>
+<pre class="hljs undefined"><code>onTransact</code></pre>
+<p>这个方法主要是进行用来调用其他函数的，它会根据传入的参数code，选择调用add方法还是query方法。</p>
+<p>接下来看看Stub.Proxy类中的方法</p>
+<pre class="hljs undefined"><code>asBinder</code></pre>
+<p>这个方法返回了Proxy对象中的mRemote变量，mRemote变量的赋值发生在Proxy类的构造函数中，而在Stub类的asInterface()方法中调用了该构造函数Proxy()，并传入了一个Binder对象，将mRemote指向了这个Binder对象。</p>
+<pre class="hljs undefined"><code>add</code></pre>
+<p>该add方法继承自IDictionary接口。里面主要是将客户端传参写入_data中,然后调用transact()方法，在transact方法中，会回调Stub类中的onTransact()。</p>
+<pre class="hljs undefined"><code>query</code></pre>
+<p>同上述add方法一样，只不过多了一个返回值。</p>
+<p>介绍完这些方法之后，我们再来将这些方法串起来，讲一下完整的IPC过程。客户端连接远程Service时，Service会返回一个Binder对象，即我们在DictionaryManagerService.onBind()中返回的继承自Stub的匿名对象，该类实现了生词本逻辑。<br>客户端调用有两种情况：</p>
+<p><strong>1:客户端和服务端在同一个进程</strong></p>
+<p>服务器端就直接将该Stub对象返回，即我们在onBind()中返回的Stub对象，客户端调用返回对象的asInterface()方法，将Stub对象强转为IDictionManager对象，直接调用IDictionManager对象中的方法，就像调用本地对象的方法一样。</p>
+<p><strong>2:客户端和服务端不在同一个进程</strong></p>
+<p>因为是跨进程，两端的内存资源是不能共享的，服务器端不可能将真正的Stub对象返回，它只能将Stub中的代理类Prxoy对象返回。客户端同样调用返回对象的asInterface()方法，将Proxy对象强转为IDictionManager对象，所以这次调用IDictionManager中add方法的时候，调用的实际上是Prxoy.add()。这次调用发生在客户端进程，然后在Proxy.add()方法中，将参数和目标函数code写入Binder驱动中，并通过回调服务端Stub.onTransact()方法，实现调用真正的Stub.add(）方法。</p>
+<h3>C++层</h3>
+<p>我们开发时所见到的Binder是Android系统提供给我们的java接口，java层的Binder对象只是Android对底层Binder的一个封装，提供给上层开发人员使用，真正的Binder其实隐藏在系统底层，默默的替我们进行着跨进程通信。</p>
+<p>Java层的服务端Binder对象在C++层对应的对象为BBinder，而客户端拿到的BinderProxy对象对应的则为BpBinder，BBindder和BpBinder都继承自IBinder，上层Binder和BinderProxy之间的通信其实是BBinder和BinderProxy之间的通信。</p>
+<p><strong>Binder的核心是Binder Driver</strong>，即Binder驱动，虽然各个进程不能共享自己的内存空间，但是系统的内核空间是共享的，每个进程都可以访问，而Binder Driver即存在于内核空间，BBinder和BpBinder都是通过它来通信的，所以可以把Binder驱动当作是BBinder和BpBinder之间的一座桥梁。当然BBinder和BpBinder也不是直接和Binder驱动打交道，它们中间还隔着一个IPCThreadState。每一个进程都有一个ProcessState对象，它负责打开Binder驱动，这样该进程中的所有线程都可以通过Binder驱动通信，而每个线程都会有一个IPCThreadState对象，它才是真正读写Binder驱动的主角，它通过talkWithDriver()和驱动打交道，将IPC数据写入驱动中。</p>
+<h3>Java--&gt;C++对象转换</h3>
+<p>回到我们上面的Demo，客户端连接成功后拿到了BinderProxy对象，那么这个服务端的Binder对象是如何转为BinderPrxoy的呢？这点我们要看bindService的源码，bindService流程很长，感兴趣的读者可以自己去看后者直接看老罗的分析，我这里直接告诉读者大致过程：</p>
+<p><strong>1.客户端请求bindService，先会请求ActivityManagerService;</strong></p>
+<p><strong>2.ActvityManagerService再去找到对应的Service，让Service所在进程创建并启动Service;</strong></p>
+<p><strong>3.Service调用AMS.publishService()将Binder对象传递给AMS;</strong></p>
+<p><strong>4.AMS拿到的Binder对象同样为BinderProxy对象，然后调用 c.conn.connected(r.name, service)方法，将BinderProxy对象传递给客户端。</strong></p>
+<p>这里要知道的是，AMS也是处在一个单独的进程中，所以Binder对象不是直接返回给AMS，AMS也不是直接返回给客户端的，而是经过了Binder驱动。服务端Service将Binder对象传递给AMS时，会调用AMS在服务端的代理对象ActivityManagerProxy.publishService()方法，准确的说，Service端在此时成了AMS的客户端。</p>
+<pre class="hljs cpp"><code class="cpp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">publishService</span><span class="hljs-params">(IBinder token,
+        Intent intent, IBinder service)</span> throws RemoteException </span>{
+    Parcel data = Parcel.obtain();
+    Parcel reply = Parcel.obtain();
+    data.writeInterfaceToken(IActivityManager.descriptor);
+    data.writeStrongBinder(token);
+    intent.writeToParcel(data, <span class="hljs-number">0</span>);
+    data.writeStrongBinder(service);
+    mRemote.transact(PUBLISH_SERVICE_TRANSACTION, data, reply, <span class="hljs-number">0</span>);
+    reply.readException();
+    data.recycle();
+    reply.recycle();
+}</code></pre>
+<p>该方法中通过Parcel.writeStrongBinder()，将服务端的Binder对象转化成C++中的flat_binder_object对象，并将Binder对象的地址赋值给flat_binder_object对象中的cookie。</p>
+<pre class="hljs objectivec"><code class="objectivec"><span class="hljs-keyword">struct</span> flat_binder_object {
+      <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> type;
+      <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> flags;
+      <span class="hljs-keyword">union</span> {
+              <span class="hljs-keyword">void</span> *binder; <span class="hljs-comment">/* local object */</span>
+              <span class="hljs-keyword">signed</span> <span class="hljs-keyword">long</span> handle; <span class="hljs-comment">/* remote object */</span>
+      };
+      <span class="hljs-keyword">void</span> *cookie;
+};</code></pre>
+<p>flat_binder_object对象最终被包装在了data中，然后通过mRemote.transact(),将data数据传送到IPCThreadState, IPCThreadState再次将data包装成binder_transaction_data，并调用talkWithDriver(),将包装好的数据传递给Binder驱动。</p>
+<p><strong>Binder驱动收到数据后，并不会急着将数据传给AMS，因为传送的数据中有flat_binder_object，所以它会查询flat_binder_object对应的Binder对象在驱动中是否有Binder节点，如果没有，则会利用flat_binder_object中的cookie值(指向BBinder)创建一个Binder节点，并为该节点生成一个索引值，将索引值赋给flat_binder_object的handle。</strong></p>
+<p>然后AMS就可以取数据了，AMS同样有一个IPCThreadState对象，Binder驱动将数据传递给该对象，接收端拿到了数据后，会调用Parcel.readStrongBinder()，这在java层是一个jni方法，该方法会先调用Native层的readStrongBinder()，利用flat_binder_object中的handle值创建BpBinder对象，然后该Native方法返回BpBinder的指针，jni方法再根据BpBinder指针创建java层的BinderProxy对象并返回给java层。至此BpBinder和BinderProxy对象都已经创建完毕。</p>
+<h3>BpBinder与BBinder的通信</h3>
+<p>上面我们已经拿到了BpBinder，那BpBinder又将如何与BBinder通信呢？这里不得不提一个重要的变量：<strong>handle</strong>。还记得在创建BpBiner的时候，需要传入flat_binder_object的handle吗，而这个handle是Binder节点在驱动中的索引，即位置。这样当BpBinder通过transact()调用BBinder时，Binder驱动就可以根据BpBinder提供的handle值找到Binder在驱动中的节点，Binder节点保存了BBinder的地址，从而找到了BBinder，实现对BBinder的调用。</p>
+<h3>系统服务的注册</h3>
+<p>上面的例子展示的<strong>匿名Binder</strong>的通信，为什么说是匿名，因为Binder对象并没有在<strong>ContextManager</strong>中实名注册。</p>
+<p>ContextManager又是什么？它是系统服务的管理者，它在java层和C++层的代理对象都为<strong>ServiceManager</strong>，系统服务可以通过<strong>ServiceManager.addService()</strong>将自己实名注册到ContextManager中。为什么要实名注册？如果不采用实名的方法，系统服务那么多，你难道一个个的去记得它的handle？</p>
+<p>ServiceManager.addService()会将服务的Binder对象传到Binder Driver，Binder Driver为其生成Binder节点后，ContextManager就会将服务的实名和其Binder节点的索引handle保存到自身。当客户端需要找一个系统服务时，只需将服务名<strong>ServiceManager.getService()</strong>，ServiceManager就可以找到服务的索引handle，并创建对应的BpBinder对象，从而建立通信。比如java层的ActivityManagerService就是一个Binder类，我们就可以通过<strong>ServiceManager.getService("activity")</strong>，拿到它的代理对象，从而进行Activity生命周期的调度。</p>
+<p>上面说到ServiceManager是ContextManager的代理，因为ContextManager本身也就是一个服务，服务端和客户端想调用它的addService或getService时，也必须通过ServiceManager来跨进程。可是我该怎么拿到这个代理呢？我总不能调用它的getService来获取它自己吧。Binder这一点设计的很奇妙，ContextManager在BinderDriver中的节点索引为0，谁让它是老大呢。这样大家都知道了，我想调用ContextManger，直接根据handle＝0就可以生成它的代理对象BpBinder了，从而创建代理对象ServiceManager。</p>
+<h2>总结</h2>
+<p>系统中每个app和系统服务都活在自己的进程中，无法访问彼此的内存空间，正是因为相互通信的强烈需求，从而诞生了Binder。Binder驱动就像所有进程共同的地盘，系统服务可以这里留下自己的地址，而客户端可以可以根据这些地址找到对应的服务，相互通信，从而千里姻缘一线牵，百年恩爱双心结。</p>
+</div>
+        </div>
+      </div>
+
+      <div class="visitor_edit">
+        <!-- further readings -->
+        <div id="further-readings" data-user-slug="2c0766c16f96" data-user-nickname="zero_sr">
+          <div id="further-reading-line" class="hide further-reading-line"></div>
+          <ul id="further-readings-list" class="reading-list unstyled"></ul>
+          <div id="further-reading-new" class="reading-edit">
+              <a id="further-reading-new-prompt" href="javascript:void(null)">
+                <i class="fa fa-plus-circle"></i> 推荐拓展阅读
+</a>            <div id="further-reading-form"></div>
+          </div>
+        </div>
+        <div class="pull-right">
+          <!-- abuse report -->
+          <div id="abuse-report" class="report_article dropdown pull-right" data-js-module="report">
+              <a data-toggle="dropdown" href="http://www.jianshu.com/p/1bd1f3ebed60#"><i class="fa fa-flag-o"></i> 举报文章</a>
+              <ul class="dropdown-menu arrow-top">
+                <li><a data-type="json" data-remote="true" rel="nofollow" data-method="post" href="http://www.jianshu.com/notes/5730195/abuse_reports?type=ad">广告及垃圾信息</a></li>
+                <li><a data-type="json" data-remote="true" rel="nofollow" data-method="post" href="http://www.jianshu.com/notes/5730195/abuse_reports?type=plagiarism">抄袭或未授权转载</a></li>
+                <li><a data-toggle="modal" data-url="/notes/5730195/abuse_reports" href="http://www.jianshu.com/p/1bd1f3ebed60#report-modal">其他</a></li>
+              </ul>
+          </div>
+          <!-- copyright -->
+          <div class="author-copyright pull-right" data-toggle="tooltip" data-html="true" title="" data-original-title="转载请联系作者获得授权，并标注“简书作者”。">
+            <a><i class="fa fa-copyright"></i> 著作权归作者所有</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reward / Support Author -->
+        <div class="support-author">
+          <p>如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作！</p>
+            <a class="btn btn-pay" data-toggle="modal" href="http://www.jianshu.com/p/1bd1f3ebed60#pay-modal">¥ 打赏支持</a>
+          <div class="avatar-list"></div>
+        </div>
+
+      <!-- article meta bottom -->
+      <div class="meta-bottom clearfix">
+        <!--  Like Button -->
+        <div class="like ">
+            <div class="like-button">
+              <a class="like-content" data-remote="true" rel="nofollow" data-method="post" href="http://www.jianshu.com/notes/5730195/like">
+                <i class="fa fa-heart-o"></i>  喜欢
+</a></div>          <span id="likes-count" data-toggle="tooltip" data-placement="right" title="" data-original-title="查看所有喜欢的用户">19</span>        </div>
+        <!--  share group -->
+        <div class="share-group pull-right">
+          <a href="javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f=&#39;http://v.t.sina.com.cn/share/share.php?appkey=1881139527&#39;,u=z||d.location,p=[&#39;&amp;url=&#39;,e(u),&#39;&amp;title=&#39;,e(t||d.title),&#39;&amp;source=&#39;,e(r),&#39;&amp;sourceUrl=&#39;,e(l),&#39;&amp;content=&#39;,c||&#39;gb2312&#39;,&#39;&amp;pic=&#39;,e(p||&#39;&#39;)].join(&#39;&#39;);function%20a(){if(!window.open([f,p].join(&#39;&#39;),&#39;mb&#39;,[&#39;toolbar=0,status=0,resizable=1,width=440,height=430,left=&#39;,(s.width-440)/2,&#39;,top=&#39;,(s.height-430)/2].join(&#39;&#39;)))u.href=[f,p].join(&#39;&#39;);};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,&#39;&#39;,&#39;&#39;,&#39;http://cwb.assets.jianshu.io/notes/images/5730195/weibo/image_e9f4f97e0019.jpg&#39;, &#39;推荐 半栈工程师 的文章《Android Binder解密》（ 分享自 @简书 ）&#39;,&#39;http://www.jianshu.com/p/1bd1f3ebed60&#39;,&#39;页面编码gb2312|utf-8默认gb2312&#39;));" data-name="weibo">
+            <i class="fa fa-weibo"></i><span>分享到微博</span>
+          </a>
+          <a data-toggle="modal" href="http://www.jianshu.com/p/1bd1f3ebed60#share-weixin-modal" data-name="weixin">
+            <i class="fa fa-weixin"></i><span>分享到微信</span>
+          </a>
+          <div class="more">
+            <a href="javascript:void(0)" data-toggle="dropdown">更多分享<i class="fa fa-caret-down"></i></a>
+            <ul class="dropdown-menu arrow-top">
+                <li><a href="http://cwb.assets.jianshu.io/notes/images/5730195/weibo/image_e9f4f97e0019.jpg" target="_blank" data-name="changweibo"><i class="fa fa-arrow-circle-o-down"></i> 下载长微博图片</a></li>
+                <li>
+                  <a data-name="tweibo" href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;http://share.v.t.qq.com/index.php?c=share&amp;a=index&amp;url=&#39;+e(&#39;http://www.jianshu.com/p/1bd1f3ebed60&#39;)+&#39;&amp;title=&#39;+e(&#39;推荐 半栈工程师 的文章《Android Binder解密》（ 分享自 @jianshuio ）&#39;),x=function(){if(!window.open(r,&#39;tweibo&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();">
+                    <img src="./Android Binder解密 - 简书_files/tweibo.png" alt="Tweibo"> 分享到腾讯微博
+</a>                </li>
+                <li>
+                  <a data-name="qzone" href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=&#39;+e(&#39;http://www.jianshu.com/p/1bd1f3ebed60&#39;)+&#39;&amp;title=&#39;+e(&#39;推荐 半栈工程师 的文章《Android Binder解密》&#39;),x=function(){if(!window.open(r,&#39;qzone&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();">
+                    <img src="./Android Binder解密 - 简书_files/qzone.png" alt="Qzone"> 分享到QQ空间
+</a>                </li>
+                <li>
+                  <a data-name="twitter" href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://twitter.com/share?url=&#39;+e(&#39;http://www.jianshu.com/p/1bd1f3ebed60&#39;)+&#39;&amp;text=&#39;+e(&#39;推荐 半栈工程师 的文章《Android Binder解密》（ 分享自 @jianshucom ）&#39;)+&#39;&amp;related=&#39;+e(&#39;jianshucom&#39;),x=function(){if(!window.open(r,&#39;twitter&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();">
+                    <img src="./Android Binder解密 - 简书_files/twitter.png" alt="Twitter"> 分享到Twitter
+</a>                </li>
+                <li>
+                  <a data-name="facebook" href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://www.facebook.com/dialog/share?app_id=483126645039390&amp;display=popup&amp;href=http://www.jianshu.com/p/1bd1f3ebed60&#39;,x=function(){if(!window.open(r,&#39;facebook&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();">
+                    <img src="./Android Binder解密 - 简书_files/facebook.png" alt="Facebook"> 分享到Facebook
+</a>                </li>
+                <li>
+                  <a data-name="google_plus" href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://plus.google.com/share?url=&#39;+e(&#39;http://www.jianshu.com/p/1bd1f3ebed60&#39;),x=function(){if(!window.open(r,&#39;google_plus&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();">
+                    <img src="./Android Binder解密 - 简书_files/google_plus.png" alt="Google plus"> 分享到Google+
+</a>                </li>
+                <li>
+                  <a data-name="douban" href="javascript:void(function(){var d=document,e=encodeURIComponent,s1=window.getSelection,s2=d.getSelection,s3=d.selection,s=s1?s1():s2?s2():s3?s3.createRange().text:&#39;&#39;,r=&#39;http://www.douban.com/recommend/?url=&#39;+e(&#39;http://www.jianshu.com/p/1bd1f3ebed60&#39;)+&#39;&amp;title=&#39;+e(&#39;Android Binder解密&#39;)+&#39;&amp;sel=&#39;+e(s)+&#39;&amp;v=1&#39;,x=function(){if(!window.open(r,&#39;douban&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r+&#39;&amp;r=1&#39;};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})()">
+                    <img src="./Android Binder解密 - 简书_files/douban.png" alt="Douban"> 分享到豆瓣
+</a>                </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modals -->
+      <div id="share-weixin-modal" class="modal hide fade share-weixin-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+  </div>
+  <div class="modal-body" title="http://www.jianshu.com/p/1bd1f3ebed60?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=weixin">
+    <h5>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</h5>
+  <canvas width="170" height="170" style="display: none;"></canvas><img src="data:image/png;base64,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" style="display: block;"></div>
+</div>
+
+      <div id="contribute-modal" tabindex="-1" class="arrow-top user-editor-actions modal hide fade">
+  <div class="modal-header">
+    <b>
+      添加到我管理的专题
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </b>
+  </div>
+  <div class="modal-body">
+    <div class="search">
+      <input type="text" name="search_term" id="search_term" class="input-large search-query" placeholder="搜索我管理的专题" data-search-collections-url="/collections/search?note_id=5730195">
+    </div>
+    <ul class="add-list"></ul>
+  </div>
+</div>
+
+      <div id="notebooks-menu" class="panel notebooks-menu arrow-top modal hide fade"><img class="loader-tiny" src="./Android Binder解密 - 简书_files/tiny.gif" alt="Tiny"></div>
+      <div id="collection-menu" class="panel collection-menu arrow-top modal hide fade"><img class="loader-tiny" src="./Android Binder解密 - 简书_files/tiny.gif" alt="Tiny"></div>
+      
+      <div id="likes-modal" class="modal modal_new support_list-modal fullscreen hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>喜欢的用户</h3>
+      </div>
+      <div class="modal-body">
+        <ul class="unstyled users">
+        <li data-user-id="1276332"> <a class="avatar" href="http://www.jianshu.com/users/21291d5a5b10"> <img src="./Android Binder解密 - 简书_files/11-bfaf6775ca414a8854c9ca910e05b7a1.jpg"> </a> <a class="blue-link" href="http://www.jianshu.com/users/21291d5a5b10">老勇</a> <span class="time">2016.09.21 20:54</span></li><li data-user-id="2697510"> <a class="avatar" href="http://www.jianshu.com/users/e249d83cf508"> <img src="./Android Binder解密 - 简书_files/9-ece2d3668ecf525c902de6c8672b6435.jpg"> </a> <a class="blue-link" href="http://www.jianshu.com/users/e249d83cf508">_see</a> <span class="time">2016.09.19 18:10</span></li><li data-user-id="1834587"> <a class="avatar" href="http://www.jianshu.com/users/86c35cc1bb74"> <img src="./Android Binder解密 - 简书_files/0a51a7447680.jpg"> </a> <a class="blue-link" href="http://www.jianshu.com/users/86c35cc1bb74">未选择的路</a> <span class="time">2016.09.19 08:56</span></li><li data-user-id="1610464"> <a class="avatar" href="http://www.jianshu.com/users/b3568d0c2808"> <img src="./Android Binder解密 - 简书_files/e0bb08566ec4"> </a> <a class="blue-link" href="http://www.jianshu.com/users/b3568d0c2808">六尾大虾</a> <span class="time">2016.09.19 08:54</span></li><li data-user-id="1621997"> <a class="avatar" href="http://www.jianshu.com/users/067d154eb029"> <img src="./Android Binder解密 - 简书_files/3-575b6d78d8c89400d30e4ed72c2675bf.jpg"> </a> <a class="blue-link" href="http://www.jianshu.com/users/067d154eb029">_ming_ming</a> <span class="time">2016.09.19 08:51</span></li><li data-user-id="2184329"> <a class="avatar" href="http://www.jianshu.com/users/dc110a3a7aa5"> <img src="./Android Binder解密 - 简书_files/b428e50f4744"> </a> <a class="blue-link" href="http://www.jianshu.com/users/dc110a3a7aa5">关谷神奇</a> <span class="time">2016.09.19 08:50</span></li><li data-user-id="2048999"> <a class="avatar" href="http://www.jianshu.com/users/67f6c1e8072e"> <img src="./Android Binder解密 - 简书_files/3-575b6d78d8c89400d30e4ed72c2675bf.jpg"> </a> <a class="blue-link" href="http://www.jianshu.com/users/67f6c1e8072e">就这样e</a> <span class="time">2016.09.19 08:45</span></li><li data-user-id="2979410"> <a class="avatar" href="http://www.jianshu.com/users/02f4a9a23381"> <img src="./Android Binder解密 - 简书_files/7-a82e998966cef5ab3eeda59b4297b619.jpg"> </a> <a class="blue-link" href="http://www.jianshu.com/users/02f4a9a23381">MigrationUK</a> <span class="time">2016.09.14 08:56</span></li><li data-user-id="2455661"> <a class="avatar" href="http://www.jianshu.com/users/61d88306a9fd"> <img src="./Android Binder解密 - 简书_files/1ae9cc8792b1"> </a> <a class="blue-link" href="http://www.jianshu.com/users/61d88306a9fd">heyuqin</a> <span class="time">2016.09.13 06:24</span></li><li data-user-id="2383214"> <a class="avatar" href="http://www.jianshu.com/users/5c86e01fae2c"> <img src="./Android Binder解密 - 简书_files/b2cd6884dcb8"> </a> <a class="blue-link" href="http://www.jianshu.com/users/5c86e01fae2c">偶尔犯贱</a> <span class="time">2016.09.13 01:19</span></li><li data-user-id="719712"> <a class="avatar" href="http://www.jianshu.com/users/5906055820d4"> <img src="./Android Binder解密 - 简书_files/b61ac08121e3"> </a> <a class="blue-link" href="http://www.jianshu.com/users/5906055820d4">浪人风子</a> <span class="time">2016.09.12 23:59</span></li><li data-user-id="2051826"> <a class="avatar" href="http://www.jianshu.com/users/ca1dd10772b3"> <img src="./Android Binder解密 - 简书_files/5b99de75ef51.png"> </a> <a class="blue-link" href="http://www.jianshu.com/users/ca1dd10772b3">Hello_Google</a> <span class="time">2016.09.12 12:34</span></li><li data-user-id="1804486"> <a class="avatar" href="http://www.jianshu.com/users/59ce6a265e91"> <img src="./Android Binder解密 - 简书_files/60011bd12762.jpg"> </a> <a class="blue-link" href="http://www.jianshu.com/users/59ce6a265e91">CDrandy</a> <span class="time">2016.09.11 17:53</span></li><li data-user-id="1998443"> <a class="avatar" href="http://www.jianshu.com/users/a2c65a148e3c"> <img src="./Android Binder解密 - 简书_files/c6d5363d9519.jpg"> </a> <a class="blue-link" href="http://www.jianshu.com/users/a2c65a148e3c">鱼人孑</a> <span class="time">2016.09.11 15:55</span></li><li data-user-id="655939"> <a class="avatar" href="http://www.jianshu.com/users/84c2f8b66ca9"> <img src="./Android Binder解密 - 简书_files/32ea5c8a434c"> </a> <a class="blue-link" href="http://www.jianshu.com/users/84c2f8b66ca9">johnwonder</a> <span class="time">2016.09.11 15:07</span></li><a class="more hidden" data-max-id="33018708" href="javascript:void(null);"><i class="fa fa-ellipsis-h"></i></a></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    <!-- Comments -->
+    <div id="comments" class="comment-list clearfix">
+        <div class="comment-head clearfix">
+          4条评论
+          <span class="order">
+            （
+            <a data-order="asc" class="active" href="javascript:void(0)">按时间正序</a>·
+            <a data-order="desc" href="javascript:void(0)">按时间倒序</a>·
+            <a data-order="likes_count" href="javascript:void(0)">按喜欢排序</a>
+            ）
+          </span>
+            <a href="javascript:void(null)" class="goto-comment pull-right"><i class="fa fa-pencil"></i>添加新评论</a>
+        </div>
+        <div id="comment-list">
+
+
+<div class="note-comment clearfix" id="comment-4127723">
+  <div class="content">
+      <div class="meta-top">
+        <a class="avatar" href="http://www.jianshu.com/users/f5dea5276192">
+          <img src="./Android Binder解密 - 简书_files/08d7880060cb" alt="100">
+</a>        <p>
+          <a class="author-name" href="http://www.jianshu.com/users/f5dea5276192">xkjQ</a>
+        </p>
+        <span class="reply-time">
+          <small>2 楼 · </small>
+          <a href="http://www.jianshu.com/p/1bd1f3ebed60/comments/4127723#comment-4127723">2016.09.11 11:32</a></span>
+      </div>
+      <p>通俗易懂 很透彻 受教了 谢谢</p>
+      <div class="comment-footer clearfix text-right">
+        <a data-id="4127723" class="like pull-left" href="javascript:void(0)">
+          <i class="fa fa-heart-o"></i>喜欢<span>(0)</span>
+</a>        <div class="dropdown report" data-commenter-id="902168">
+          <a class="report_comment" href="javascript:void(0)" data-toggle="dropdown">举报</a>
+          <ul class="dropdown-menu arrow-top">
+            <li><a data-type="json" data-remote="true" rel="nofollow" data-method="post" href="http://www.jianshu.com/comments/4127723/abuse_reports?type=ad">广告及垃圾信息</a></li>
+            <li><a data-toggle="modal" data-url="/comments/4127723/abuse_reports" href="http://www.jianshu.com/p/1bd1f3ebed60#report-modal">其他</a></li>
+          </ul>
+        </div>
+
+        <a data-id="4127723" data-nickname="xkjQ" class="reply" href="javascript:void(0)">回复</a>
+        
+        
+      </div>
+    <div class="child-comment-list ">
+        <div class="child-comment" id="comment-4128028" data-id="4128028">
+    <p>
+      <a class="blue-link" href="http://www.jianshu.com/users/de53c0ce96ab">半栈工程师</a>：
+       <a href="http://www.jianshu.com/users/f5dea5276192" class="maleskine-author" target="_blank" data-user-slug="f5dea5276192">@xkjQ</a> 谢谢夸奖，欢迎分享😁
+    </p>
+    <div class="child-comment-footer text-right clearfix">
+      <div class="dropdown report" data-commenter-id="2819184">
+        <a class="report_comment" href="javascript:void(0)" data-toggle="dropdown">举报</a>
+        <ul class="dropdown-menu arrow-top">
+          <li><a data-type="json" data-remote="true" rel="nofollow" data-method="post" href="http://www.jianshu.com/comments/4128028/abuse_reports?type=ad">广告及垃圾信息</a></li>
+          <li><a data-toggle="modal" data-url="/comments/4128028/abuse_reports" href="http://www.jianshu.com/p/1bd1f3ebed60#report-modal">其他</a></li>
+        </ul>
+      </div>
+      <a data-id="4127723" data-nickname="半栈工程师" class="reply" href="javascript:void(null)">回复</a>
+      
+      
+      <span class="reply-time pull-left">
+        <a href="http://www.jianshu.com/p/1bd1f3ebed60/comments/4128028#comment-4128028">2016.09.11 11:52</a></span>
+      
+    </div>
+  </div>
+
+      <div data-state="remaining-child-comments"></div>
+        <div class="comment-toolbar clearfix">
+          <span class="pull-right">
+            <a data-id="4127723" class="reply" href="javascript:void(null)"><i class="fa fa-pencil"></i> 添加新回复</a>
+          </span>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="note-comment clearfix" id="comment-4160261">
+  <div class="content">
+      <div class="meta-top">
+        <a class="avatar" href="http://www.jianshu.com/users/5c86e01fae2c">
+          <img src="./Android Binder解密 - 简书_files/b2cd6884dcb8" alt="100">
+</a>        <p>
+          <a class="author-name" href="http://www.jianshu.com/users/5c86e01fae2c">偶尔犯贱</a>
+        </p>
+        <span class="reply-time">
+          <small>3 楼 · </small>
+          <a href="http://www.jianshu.com/p/1bd1f3ebed60/comments/4160261#comment-4160261">2016.09.13 01:19</a></span>
+      </div>
+      <p>mark</p>
+      <div class="comment-footer clearfix text-right">
+        <a data-id="4160261" class="like pull-left" href="javascript:void(0)">
+          <i class="fa fa-heart-o"></i>喜欢<span>(0)</span>
+</a>        <div class="dropdown report" data-commenter-id="2383214">
+          <a class="report_comment" href="javascript:void(0)" data-toggle="dropdown">举报</a>
+          <ul class="dropdown-menu arrow-top">
+            <li><a data-type="json" data-remote="true" rel="nofollow" data-method="post" href="http://www.jianshu.com/comments/4160261/abuse_reports?type=ad">广告及垃圾信息</a></li>
+            <li><a data-toggle="modal" data-url="/comments/4160261/abuse_reports" href="http://www.jianshu.com/p/1bd1f3ebed60#report-modal">其他</a></li>
+          </ul>
+        </div>
+
+        <a data-id="4160261" data-nickname="偶尔犯贱" class="reply" href="javascript:void(0)">回复</a>
+        
+        
+      </div>
+    <div class="child-comment-list hide">
+      
+      <div data-state="remaining-child-comments"></div>
+    </div>
+  </div>
+</div>
+
+<div class="note-comment clearfix" id="comment-4319587">
+  <div class="content">
+      <div class="meta-top">
+        <a class="avatar" href="http://www.jianshu.com/users/c91bac841dc7">
+          <img src="./Android Binder解密 - 简书_files/14-75d944a989bbbd5b92a639698c9b4a3c.jpg" alt="14">
+</a>        <p>
+          <a class="author-name" href="http://www.jianshu.com/users/c91bac841dc7">agem</a>
+        </p>
+        <span class="reply-time">
+          <small>4 楼 · </small>
+          <a href="http://www.jianshu.com/p/1bd1f3ebed60/comments/4319587#comment-4319587">2016.09.21 11:43</a></span>
+      </div>
+      <p>好评</p>
+      <div class="comment-footer clearfix text-right">
+        <a data-id="4319587" class="like pull-left" href="javascript:void(0)">
+          <i class="fa fa-heart-o"></i>喜欢<span>(0)</span>
+</a>        <div class="dropdown report" data-commenter-id="1727399">
+          <a class="report_comment" href="javascript:void(0)" data-toggle="dropdown">举报</a>
+          <ul class="dropdown-menu arrow-top">
+            <li><a data-type="json" data-remote="true" rel="nofollow" data-method="post" href="http://www.jianshu.com/comments/4319587/abuse_reports?type=ad">广告及垃圾信息</a></li>
+            <li><a data-toggle="modal" data-url="/comments/4319587/abuse_reports" href="http://www.jianshu.com/p/1bd1f3ebed60#report-modal">其他</a></li>
+          </ul>
+        </div>
+
+        <a data-id="4319587" data-nickname="agem" class="reply" href="javascript:void(0)">回复</a>
+        
+        
+      </div>
+    <div class="child-comment-list hide">
+      
+      <div data-state="remaining-child-comments"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+          <form class="new_comment" id="new_comment" data-type="json" action="http://www.jianshu.com/notes/5730195/comments" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="✓">
+    <div class="comment-text">
+      <textarea maxlength="2000" placeholder="写下你的评论…" class="mousetrap" name="comment[content]" id="comment_content"></textarea>
+      <div>
+        <input type="submit" name="commit" value="发 表" class="btn btn-info" data-disable-with="提交中...">
+          <div class="emoji">
+    <a href="http://www.jianshu.com/p/1bd1f3ebed60#emoji-modal" data-toggle="modal"><i class="fa fa-smile-o"></i></a>
+    <div id="emoji-modal" class="emoji-modal arrow-top hide" tabindex="-1" aria-hidden="true">
+      <ul id="emojiTab" class="emoji-nav-tabs modal-header">
+          <li class="active"><a href="http://www.jianshu.com/p/1bd1f3ebed60#emoji-pane-1" data-toggle="tab">1</a></li>
+          <li class=""><a href="http://www.jianshu.com/p/1bd1f3ebed60#emoji-pane-2" data-toggle="tab">2</a></li>
+          <li class=""><a href="http://www.jianshu.com/p/1bd1f3ebed60#emoji-pane-3" data-toggle="tab">3</a></li>
+          <li class=""><a href="http://www.jianshu.com/p/1bd1f3ebed60#emoji-pane-4" data-toggle="tab">4</a></li>
+      </ul>
+      <div id="emojiTabContent" class="tab-content">
+          <div class="tab-pane fade active in" id="emoji-pane-1">
+          <ul>
+          </ul>
+        </div>
+          <div class="tab-pane fade  in" id="emoji-pane-2">
+          <ul>
+          </ul>
+        </div>
+          <div class="tab-pane fade  in" id="emoji-pane-3">
+          <ul>
+          </ul>
+        </div>
+          <div class="tab-pane fade  in" id="emoji-pane-4">
+          <ul>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+          <span class="hotkey">Ctrl+Enter 发表</span>
+        <span class="warning" style="display: none"><i class="fa fa-exclamation-circle"></i><span class="warning-text"></span></span>
+      </div>
+    </div>
+</form>
+    </div>
+    <!-- -->
+
+  </div>
+
+  <script type="application/json" data-name="note">
+    {"id":5730195,"abbr":"前言 稍微看过Android FrameWork层的人应该都知道Binder，因为app与系统服务之间的通信基本上都是建立在Binder的基础上。之前对Binder也是云里雾里，似懂非懂，于是花了不少时间，看了很多资料和源码，才大致了解了Binder通信的原理，总结出来，如有错误，还望指正。 简介 Binder是什么？Binder是为跨进程通信而生的产物。众所周知，我们的app都是由Zygote进程fork出来的，每个app都运行在单独的进程中，一个app想与另外一个app进行通信，只能采用跨进程的方式，传统的Linux跨进程方式有如下几种：管道、信号量、共享内存及Socket等，And...","slug":"1bd1f3ebed60","url":"http://www.jianshu.com/p/1bd1f3ebed60","image_url":"http://cwb.assets.jianshu.io/notes/images/5730195/weibo/image_e9f4f97e0019.jpg","wordage":3506,"has_further_readings":false,"views_count":928,"likes_count":19,"comments_count":4,"rewards_total_count":0}
+  </script>
+
+  <script type="application/json" data-name="uuid">
+    {"uuid":"981cac1c-1503-4218-af5b-39f5a112e344"}
+  </script>
+
+  <script type="application/json" data-name="author">
+    {"id":2819184,"nickname":"半栈工程师","slug":"de53c0ce96ab","public_notes_count":3,"followers_count":23,"total_likes_count":30,"is_current_user":false,"is_signed_author":false}
+  </script>
+
+    <script type="application/json" data-name="current-user">
+      {"id":2096107,"slug":"2c0766c16f96","nickname":"zero_sr","avatar_url":"http://upload.jianshu.io/users/upload_avatars/2096107/52270422fd48.jpg?imageMogr/thumbnail/90x90/quality/100","blocked_by_author":false,"blocked_user_ids":[],"balance_in_cent":200,"is_a_collection_editor":false}
+    </script>
+
+    <script type="application/json" data-name="comment-participants">
+      []
+    </script>
+
+
+
+    <div class="include-collection">
+      <div class="content">
+        <h5>被以下专题收入，发现更多相似内容：</h5>
+        <ul id="all-collections" class="unstyled collections-list">
+            <li>
+              <a class="avatar" href="http://www.jianshu.com/collection/NEt52a"><img src="./Android Binder解密 - 简书_files/computer_guy.jpg" alt="180"></a>              <div class="collections-info">
+                <h5>
+                  <a href="http://www.jianshu.com/collection/NEt52a">程序员</a>
+                </h5>
+                
+  <div class="btn btn-success follow" id="subscribe_collection_16">
+    <a data-type="json" data-collection-id="16" data-remote="true" rel="nofollow" data-method="post" href="http://www.jianshu.com/collections/16/subscribe">
+      <i class="fa fa-fw fa-plus"></i>  <span>添加关注</span>
+</a>    <span>174.6K</span>
+  </div>
+
+                <p class="description">如果你是程序员，或者有一颗喜欢写程序的心，喜欢分享技术干货、项目经验、程序员日常囧事等等，欢迎投稿《程序员》专题。
+
+专题主编：小...</p>
+                <p>
+                  <a class="blue-link" href="http://www.jianshu.com/collection/NEt52a">23841篇文章</a> · 174620人关注
+                </p>
+              </div>
+            </li>
+            <li>
+              <a class="avatar" href="http://www.jianshu.com/collection/bDHhpK"><img src="./Android Binder解密 - 简书_files/rdn_4ddb18fddd2e9_(1).jpg" alt="180"></a>              <div class="collections-info">
+                <h5>
+                  <a href="http://www.jianshu.com/collection/bDHhpK">首页投稿</a>
+                </h5>
+                
+  <div class="btn btn-success follow" id="subscribe_collection_47">
+    <a data-type="json" data-collection-id="47" data-remote="true" rel="nofollow" data-method="post" href="http://www.jianshu.com/collections/47/subscribe">
+      <i class="fa fa-fw fa-plus"></i>  <span>添加关注</span>
+</a>    <span>130.2K</span>
+  </div>
+
+                <p class="description">玩转简书的第一步，从这个专题开始。
+
+想上首页热门榜么？好内容想被更多人看到么？来投稿吧！如果被拒也不要灰心哦～入选文章会进一个队...</p>
+                <p>
+                  <a class="blue-link" href="http://www.jianshu.com/collection/bDHhpK">101864篇文章</a> · 130268人关注
+                </p>
+              </div>
+            </li>
+            <li>
+              <a class="avatar" href="http://www.jianshu.com/collection/3fde3b545a35"><img src="./Android Binder解密 - 简书_files/android.graphics.Bitmap_3d178cba.jpeg" alt="180"></a>              <div class="collections-info">
+                <h5>
+                  <a href="http://www.jianshu.com/collection/3fde3b545a35">Android知识</a>
+                </h5>
+                
+  <div class="btn btn-success follow" id="subscribe_collection_284">
+    <a data-type="json" data-collection-id="284" data-remote="true" rel="nofollow" data-method="post" href="http://www.jianshu.com/collections/284/subscribe">
+      <i class="fa fa-fw fa-plus"></i>  <span>添加关注</span>
+</a>    <span>21.1K</span>
+  </div>
+
+                <p class="description">分享Android开发的知识，教程，解析，前沿信息，都可以，欢迎大家投稿~
+内容可搞笑，可逗比，另外欢迎申请管理员
+</p>
+                <p>
+                  <a class="blue-link" href="http://www.jianshu.com/collection/3fde3b545a35">5099篇文章</a> · 21140人关注
+                </p>
+              </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+  <!-- Modal -->
+    <div class="modal pay-modal text-center hide fade" id="pay-modal">
+  <div class="modal-header clearfix">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+  </div>
+  <form id="new_reward" class="new_reward" target="_blank" action="http://www.jianshu.com/notes/5730195/rewards" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="+ctwshMDXV42/je9Y75oW1/TPrDKECaTWf/4wQyYELfHwuWb2z1JdlQHiloZNgLJZOxf/Dksa9qQPXbZ/qRDVQ==">
+    <div class="modal-body">
+      <a href="http://www.jianshu.com/users/de53c0ce96ab">
+        <div class="avatar"><img src="./Android Binder解密 - 简书_files/328930572d41.jpeg" alt="100"></div>
+</a>      <p><i class="fa fa-quote-left pull-left"></i>如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作！<i class="fa fa-quote-right pull-right"></i></p>
+      <div class="main-inputs text-left">
+        <div class="control-group">
+          <label for="reward_amount">打赏金额</label><i class="fa fa-yen"></i>
+          <input value="2.00" type="text" name="reward[amount_in_yuan]" id="reward_amount_in_yuan">
+        </div>
+        <div class="control-group message">
+          <textarea placeholder="给Ta留言" name="reward[message]" id="reward_message"></textarea>
+        </div>
+      </div>
+      <div class="choose-pay text-left">
+        <h5>选择支付方式：</h5>
+        <div>
+          <label for="reward_channel_alipay">
+            <div class="iradio_minimal checked" style="position: relative;"><input type="radio" value="alipay" checked="checked" name="reward[channel]" id="reward_channel_alipay" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div>
+            <span class="alipay-bg"></span>
+</label>
+          <label for="reward_channel_balance">
+            <div class="iradio_minimal" style="position: relative;"><input type="radio" value="balance" name="reward[channel]" id="reward_channel_balance" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div>
+            简书余额（ 余额：¥ 2.00 ）
+</label>
+          <label for="reward_channel_wx_pub_qr">
+            <div class="iradio_minimal" style="position: relative;"><input type="radio" value="wx_pub_qr" name="reward[channel]" id="reward_channel_wx_pub_qr" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div>
+            微信支付
+</label>        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button name="button" type="submit" class="btn btn-large btn-pay">立即支付</button>
+    </div>
+</form></div>
+
+    <div class="modal success-pay text-center hide fade" id="success-pay">
+  <div class="modal-header clearfix">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+  </div>
+  <div class="modal-body">
+    <h3><i class="icon-ok"></i>打赏成功</h3>
+    <img src="./Android Binder解密 - 简书_files/complete-pay-25426877089eb23bd76d9d0e6aad89c1.png" alt="Complete pay">
+  </div>
+  <div class="modal-footer">
+    <a class="blue-link" href="http://www.jianshu.com/wallet">查看打赏记录</a>
+  </div>
+</div>
+
+</div>
+
+  <div class="imagebubble-backmask image-package" style="z-index: 1000;"><img class="imagebubble-ghost" src="./Android Binder解密 - 简书_files/2819184-9e09b10d23b1cf54.gif" style="top: 7181px; left: 352px; width: 600px; height: 800px;"><img class="imagebubble-ghost" src="./Android Binder解密 - 简书_files/2819184-40b99b80af17ee26(1).png" style="top: 1317px; left: 342px; width: 620px; height: 410px;"></div></div>
+  <div id="flash" class="hide"></div>
+  
+  <div id="view-mode-modal" tabindex="-1" class="modal hide read-modal" aria-hidden="false" data-js-module="view-mode-modal">
+    <div class="btn-group change-background" data-toggle="buttons-radio">
+
+      <a class="btn btn-daytime active" data-mode="day" data-remote="true" rel="nofollow" data-method="put" href="http://www.jianshu.com/preferences?read_mode=day">
+        <i class="fa fa-sun-o"></i>
+</a>      <a class="btn btn-nighttime " data-mode="night" data-remote="true" rel="nofollow" data-method="put" href="http://www.jianshu.com/preferences?read_mode=night">
+        <i class="fa fa-moon-o"></i>
+</a>    </div>
+    <div class="btn-group change-font" data-toggle="buttons-radio">
+      <a class="btn font " data-font="font1" data-remote="true" rel="nofollow" data-method="put" href="http://www.jianshu.com/preferences?default_font=font1">宋体</a>
+      <a class="btn font hei active" data-font="font2" data-remote="true" rel="nofollow" data-method="put" href="http://www.jianshu.com/preferences?default_font=font2">黑体</a>
+    </div>
+    <div class="btn-group change-locale" data-toggle="buttons-radio">
+      <a class="btn font active" data-locale="zh-CN" data-remote="true" rel="nofollow" data-method="put" href="http://www.jianshu.com/preferences/set_locale?locale=zh-CN">简</a>
+      <a class="btn font hei " data-locale="zh-TW" data-remote="true" rel="nofollow" data-method="put" href="http://www.jianshu.com/preferences/set_locale?locale=zh-TW">繁</a>
+    </div>
+  </div>
+
+  <div id="report-modal" class="modal hide fade modal_report fullscreen" tabindex="-1" role="dialog" aria-labelledby="reportModal" aria-hidden="true" data-js-module="report-modal">
+  <form id="report-form" data-type="json" action="javascript:void(0)" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="✓">
+    <input type="hidden" name="type" id="type" value="other">
+
+    <div class="modal-header">
+      <b>举报原因</b>
+    </div>
+    <div class="modal-body">
+      <textarea name="content" id="content" maxlength="2000" placeholder="写下你的举报原因..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <a class="btn" data-dismiss="modal" aria-hidden="true" href="javascript:void(0)">取消</a>
+      <input type="submit" name="commit" value="确认" class="btn btn-info">
+    </div>
+</form></div>
+
+
+  <script src="./Android Binder解密 - 简书_files/base-ded41764c207f7ff545c28c670922d25.js"></script>
+  
+  <script src="./Android Binder解密 - 简书_files/reading-base-0028299ec0c770293c0f07e2f338b48f.js"></script>
+  <script src="./Android Binder解密 - 简书_files/note_show-1805bf39f59948b52870922039360dbb.js"></script>
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-35169517-1']);
+  _gaq.push(['_setCustomVar', 2, 'User Type', 'Member', 1 ]);
+  _gaq.push(['_trackPageview']);
+
+  
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+<script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+<div id="atwho-container"><div id="atwho-ground-comment_content"><div class="atwho-view" id="at-view-64"><ul class="atwho-view-ul"></ul></div></div><div id="atwho-ground-comment_content"><div class="atwho-view" id="at-view-58"><ul class="atwho-view-ul"></ul></div></div></div></body></html>

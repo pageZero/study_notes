@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<!-- saved from url=(0073)http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=GBK"><script type="text/javascript" async="" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/pctm"></script><script type="text/javascript" async="" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/pctm(1)"></script><script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/shares.php" charset="utf-8"></script><script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/id.php" charset="utf-8"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子</title>
+<meta name="keywords" content="OkHttp,上传,进度">
+<meta name="description" content="相信大家对OkHttp也是相当的熟悉了，毕竟是Square的东西，对于其种种优点，这里也不再叙说。优秀是优秀，但是毕竟优秀的东西给我们封装了太多，那么问题来了，我们使用OkHttp作为我们的网络层，简单地进行GET/POST请求是毫无问题。近日看了产品的设计稿，毛">
+<link href="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/new.css" rel="stylesheet" type="text/css">
+<script language="javascript" type="text/javascript" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/jquery-1.7.1.min.js"></script>
+<link href="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/github-v2.min.css" rel="stylesheet">
+<script language="javascript" type="text/javascript" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/myajax.js"></script>
+<script language="javascript" type="text/javascript">
+	function CheckLogin(){
+	    var taget_obj = document.getElementById('login_info');
+	    myajax = new MyAjax(taget_obj,false,false,'','','');
+	    myajax.SendGet2("/member/ajax_loginsta.php");
+	    DedeXHTTP = null;
+	}
+	function checkSubmit(){
+		if(document.feedback.msg.value!='') document.feedback.submit();
+		else alert("评论内容不能为空！");
+	}		
+
+	function postBadGood(ftype,fid)
+	{
+		var taget_obj = document.getElementById(ftype+fid);
+		var saveid = GetCookie('badgoodid');
+		if(saveid != null)
+		{
+			var saveids = saveid.split(',');
+			var hasid = false;
+			saveid = '';
+			j = 1;
+			for(i=saveids.length-1;i>=0;i--)
+			{
+				if(saveids[i]==fid && hasid) continue;
+				else {
+					if(saveids[i]==fid && !hasid) hasid = true;
+					saveid += (saveid=='' ? saveids[i] : ','+saveids[i]);
+					j++;
+					if(j==10 && hasid) break;
+					if(j==9 && !hasid) break;
+				}
+			}
+			if(hasid) { alert('您刚才已表决过了喔！'); return false;}
+			else saveid += ','+fid;
+			SetCookie('badgoodid',saveid,1);
+		}
+		else
+		{
+			SetCookie('badgoodid',fid,1);
+		}
+		myajax = new MyAjax(taget_obj,false,false,'','','');
+		myajax.SendGet2("/plus/feedback.php?aid="+fid+"&action="+ftype+"&fid="+fid);
+	}
+	function postStow(aid)
+	{
+		var taget_obj = document.getElementById('newdigg');
+ 
+		myajax = new MyAjax(taget_obj,false,false,'','','');
+		myajax.SendGet2("/plus/stow.php?aid="+aid);
+	}
+	function postDigg(ftype,aid)
+	{
+		var taget_obj = document.getElementById('newdigg');
+		var saveid = GetCookie('diggid');
+		if(saveid != null)
+		{
+			var saveids = saveid.split(',');
+			var hasid = false;
+			saveid = '';
+			j = 1;
+			for(i=saveids.length-1;i>=0;i--)
+			{
+				if(saveids[i]==aid && hasid) continue;
+				else {
+					if(saveids[i]==aid && !hasid) hasid = true;
+					saveid += (saveid=='' ? saveids[i] : ','+saveids[i]);
+					j++;
+					if(j==20 && hasid) break;
+					if(j==19 && !hasid) break;
+				}
+			}
+			if(hasid) { alert("您已经顶过该帖，请不要重复顶帖 ！"); return; }
+			else saveid += ','+aid;
+			SetCookie('diggid',saveid,1);
+		}
+		else
+		{
+			SetCookie('diggid',aid,1);
+		}
+		myajax = new MyAjax(taget_obj,false,false,'','','');
+		var url = "/plus/digg_ajax.php?action="+ftype+"&id="+aid;
+		myajax.SendGet2(url);
+	}
+	function getDigg(aid)
+	{
+		var taget_obj = document.getElementById('newdigg');
+		myajax = new MyAjax(taget_obj,false,false,'','','');
+		myajax.SendGet2("/plus/digg_ajax.php?id="+aid);
+		DedeXHTTP = null;
+	} 
+	jQuery(document).ready(function($) {
+		$('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+	    prettyPrint();
+	
+	    //注意最后的@me必须要加两重引号，不然js语法会出错
+	    var htmlstr =  '';
+	    $(".arc_body").prepend(htmlstr); 
+	});
+			
+</script>
+
+<style type="text/css">#gj_mini{background-image:url(http://s.pc.qq.com/navigate/adc/v2/hover-ok.png);background-repeat:no-repeat;display:block;width:58px;height:58px;background-position:0 0}#gj_shard{background-image:url(http://s.pc.qq.com/navigate/adc/v2/suipian.png);background-repeat:no-repeat;display:none;width:200px;height:200px;background-position:0 0}#gj_circle{background-image:url(http://s.pc.qq.com/navigate/adc/v2/guangquan.png);background-repeat:no-repeat;display:none;width:58px;height:58px;background-position:0 0}#gj_bar_left{background: url(http://s.pc.qq.com/navigate/adc/v2/zuo.png) no-repeat; height:42px; width :0px; font-family: "Microsoft YaHei" ! important;overflow:hidden; display:block;}#gj_bar_left #tipstext{line-height:normal;padding-left: 20px;padding-top: 3px;font-size: 12px;padding-right: 10px;color: #fff;overflow:hidden;}#gj_bar_left span{font-size: 14px;font-weight: bold;overflow:hidden;}</style></head>
+<body><link href="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/jiathis_counter.css" rel="stylesheet" type="text/css"><link href="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/jiathis_share.css" rel="stylesheet" type="text/css"><iframe frameborder="0" style="position: absolute; display: none; opacity: 0;" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/saved_resource.html"></iframe><div class="jiathis_style" style="position: absolute; z-index: 1000000000; display: none; top: 50%; left: 50%; overflow: auto;"></div><div class="jiathis_style" style="position: absolute; z-index: 1000000000; display: none; overflow: auto;"></div><iframe frameborder="0" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/jiathis_utility.html" style="display: none;"></iframe>
+
+<div class="header">  
+	<div class="headercon container clearfix">
+        <div class="row">
+            <div class="col-md-12">
+            	<!-- 导航部分 -->
+                <a class="logo-t" href="http://www.jcodecraeer.com/"><img width="181" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/logo.png"></a>
+                <ul class="nav-ul">
+                	<li id="nav-index"><a href="http://www.jcodecraeer.com/">首页</a></li>
+                    <li id="nav-code"><a href="http://www.jcodecraeer.com/plus/list.php?tid=31">代码</a></li>
+                    <li id="nav-feed"><a class="" href="http://www.jcodecraeer.com/plus/freelist.php?lid=12">话题</a></li>
+                    <li id="nav-ask"><a class="" href="http://www.jcodecraeer.com/ask">问答</a></li>
+                    <li id="nav-tag"><a href="http://www.jcodecraeer.com/tags.php" class="trigger">标签</a></li>
+                    <li><a href="http://www.jcodecraeer.com/about.html" class="">关于</a></li>
+                </ul>
+                <!-- 导航部分 end -->
+                
+                <!-- 搜索-下拉 -->
+                <div class="header_right">
+                	<div class="search_start">
+                         <div class="search_cont">
+                            <form action="http://www.jcodecraeer.com/plus/search.php" method="get">
+                            	<input type="hidden" name="kwtype" value="0">
+                                <input type="text" name="q" class="in_search" autocomplete="off" value="搜索">
+                                <input type="submit" class="in_submit">
+        						<span class="glyphicon glyphicon-search icon-search"></span>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- 消息下拉 -->
+                    <div class="header_right_msg z">  
+                        <!-- 登录 -->
+                        <div class="right_login" id="login_info">
+                            <a class="l" href="http://www.jcodecraeer.com/member/login.php">登录</a>
+                            <a href="http://www.jcodecraeer.com/member/reg_new.php">注册</a>
+                        </div>
+                        <!-- 登录 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="javascript" type="text/javascript">CheckLogin();</script>
+<script language="javascript" type="text/javascript">
+  $(function(){
+	
+	$(".in_search").click(function(){
+		$(".search_cont").addClass('ser').animate({
+			width:200,
+		},200);
+		if($(this).val() == '搜索'){
+			$(".in_search").val('');
+		}
+	})
+	$(".in_search").blur(function(){
+		if($(this).val() !== ''){
+			return false;
+		}
+		$(".search_cont").removeClass('ser').animate({
+			width:90,
+		},200);
+		$(".in_search").val('搜索');
+	});
+	
+});
+</script>
+
+
+<div class="container main">
+	<div class="row">
+        <div class="col-md-9">
+
+			<div class="arc_position">
+				  <a href="http://www.jcodecraeer.com/">首页</a> &gt; <a href="http://www.jcodecraeer.com/plus/list.php?tid=16">安卓开发</a> &gt; <a href="http://www.jcodecraeer.com/plus/list.php?tid=18">android开发</a> &gt; 
+			</div>	
+					
+            <div class="articlecon clearfix">
+				<h1 class="title">Android OkHttp文件上传与下载的进度监听扩展</h1>
+			
+				<div class="subinfo clearfix">              
+						 泡在网上的日子  发表于 2015-09-04 10:31   
+						<span>第</span> 
+					<script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/count.php" type="text/javascript" language="javascript"></script>29043 
+					<span>次阅读</span>
+					<span class="tags" id="arc_tags">                            
+						<a href="http://www.jcodecraeer.com/tags.php?/OkHttp/" class="tag">OkHttp</a>,<a href="http://www.jcodecraeer.com/tags.php?/%C9%CF%B4%AB/" class="tag">上传</a>,<a href="http://www.jcodecraeer.com/tags.php?/%BD%F8%B6%C8/" class="tag">进度</a>
+					 </span>
+					<script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/is_admin.php" type="text/javascript" language="javascript"> </script>  
+				</div>
+				<!-- JiaThis Button BEGIN -->
+				<div class="jiathis_style" style=" height:30px; width:180px; margin:auto;text-align:center;">
+					<a class="jiathis_button_qzone" title="分享到QQ空间"><span class="jiathis_txt jtico jtico_qzone"></span></a>
+					<a class="jiathis_button_tsina" title="分享到微博"><span class="jiathis_txt jtico jtico_tsina"></span></a>
+					<a class="jiathis_button_tqq" title="分享到腾讯微博"><span class="jiathis_txt jtico jtico_tqq"></span></a>
+					<a class="jiathis_button_weixin" title="分享到微信"><span class="jiathis_txt jtico jtico_weixin"></span></a>
+					<a class="jiathis_button_renren" title="分享到人人网"><span class="jiathis_txt jtico jtico_renren"></span></a>
+					<a class="jiathis_button_xiaoyou" title="分享到朋友网"><span class="jiathis_txt jtico jtico_xiaoyou"></span></a>
+					<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+					<a class="jiathis_counter_style"><span class="jiathis_button_expanded jiathis_counter jiathis_bubble_style" id="jiathis_counter_23" title="累计分享27次">27</span></a>
+				</div>
+				<script type="text/javascript" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/jia.js" charset="utf-8"></script><script type="text/javascript" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/plugin.client.js" charset="utf-8"></script>
+				<!-- JiaThis Button END -->
+             
+				<div class="arc_body"> 
+					 <p style="margin-top:10px">
+						<script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/fuckblok.php" language="javascript"></script><strong>编辑推荐：</strong><a href="http://gold.xitu.io/">稀土掘金</a>，这是一个针对技术开发者的一个应用，你可以在掘金上获取最新最优质的技术干货，不仅仅是Android知识、前端、后端以至于产品和设计都有涉猎，想成为全栈工程师的朋友不要错过！
+					</p>
+					 <style> .runtimead{  text-align:center ;background: radial-gradient(ellipse closest-side at center, rgba(255,255,255,1) 70%,rgba(251,252,253,1) 85%,rgba(244,247,250,1) 100%);
+    padding: 25px;}</style>
+<p>来自csdn 安卓弟<a href="http://blog.csdn.net/sbsujjbcy" style="white-space: normal;">http://blog.csdn.net/sbsujjbcy</a>，另外okhttp的sample中有代码原型<a href="https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/Progress.java" target="_self" textvalue="这里 ">这里 </a>&nbsp; &nbsp;，可以对照此文相互参考。</p><p>相信大家对OkHttp也是相当的熟悉了，毕竟是Square的东西，对于其种种优点，这里也不再叙说。优秀是优秀，但是毕竟优秀的东西给我们封装了太多，那么问题来了，我们使用OkHttp作为我们的网络层，简单地进行GET/POST请求是毫无问题。近日看了产品的设计稿，毛估估会有文件的上传与下载的需求，如果使用OkHttp作为网络层进行封装，你会惊讶的发现，简直封装的太“完美”了。如果现在有这么一个需求，要求对文件进行上传或下载，但是在上传或者下载前，你需要给用户一个友好的提示，在上传或者下载中，你需要将进度展示给用户，下载或者完成后提示用户下载完成。</p><p>但是呢，找啊找，你会发现基本上找不到OkHttp的这种用法，百度是找不到，但是你别忘记了还有谷歌，谷歌一搜，Stackoverflow就全出来了，甚至github上的issue都出来了，可见并不是我们遇到了这么一个问题，还要许许多多的人遇到了这个问题，粗粗看了几个回答，感觉有几个还是比较靠谱的。为了日后的重用，我将其封装为一个OkHttp的扩展库，暂时取名为CoreProgress。</p><p>要实现进度的监听，需要使用到OkHttp的依赖包Okio里的两个类，一个是Source，一个是Sink，至于Okio的东西，这里也不多说。</p> <p class="runtimead"><script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/fuckblok(1).php" language="javascript"></script><script async="" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/adsbygoogle.js"></script>
+<!-- 超级横幅广告 -->
+<ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-8583773779396897" data-ad-slot="3029555512"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script></p>  <p>首先我们实现文件下载的进度监听。OkHttp给我们的只是一个回调，里面有Response返回结果，我们需要继承一个类，对结果进行监听，这个类就是ResponseBody，但是如何将它设置到OkHttp中去呢，答案是拦截器。拦截器的部分后面再叙述，这里先实现ResponseBody的子类ProgressResponseBody。</p><p>要监听进度，我们必然需要一个监听器，也就是一个接口，在其实现类中完成回调内容的处理，该接口声明如下。</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="com">/**</span></li><li class="L1"><span class="com">&nbsp;*&nbsp;响应体进度回调接口，比如用于文件下载中</span></li><li class="L2"><span class="com">&nbsp;*&nbsp;User:lizhangqu(513163535@qq.com)</span></li><li class="L3"><span class="com">&nbsp;*&nbsp;Date:2015-09-02</span></li><li class="L4"><span class="com">&nbsp;*&nbsp;Time:&nbsp;17:16</span></li><li class="L5"><span class="com">&nbsp;*/</span></li><li class="L6"><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">interface</span><span class="pln">&nbsp;</span><span class="typ">ProgressResponseListener</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onResponseProgress</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;bytesRead</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">);</span></li><li class="L8"><span class="pun">}</span></li></ol></pre><p>然后会使用到该接口</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="com">/**</span></li><li class="L1"><span class="com">&nbsp;*&nbsp;包装的响体，处理进度</span></li><li class="L2"><span class="com">&nbsp;*&nbsp;User:lizhangqu(513163535@qq.com)</span></li><li class="L3"><span class="com">&nbsp;*&nbsp;Date:2015-09-02</span></li><li class="L4"><span class="com">&nbsp;*&nbsp;Time:&nbsp;17:18</span></li><li class="L5"><span class="com">&nbsp;*/</span></li><li class="L6"><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">class</span><span class="pln">&nbsp;</span><span class="typ">ProgressResponseBody</span><span class="pln">&nbsp;</span><span class="kwd">extends</span><span class="pln">&nbsp;</span><span class="typ">ResponseBody</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//实际的待包装响应体</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">ResponseBody</span><span class="pln">&nbsp;responseBody</span><span class="pun">;</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//进度回调接口</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">ProgressResponseListener</span><span class="pln">&nbsp;progressListener</span><span class="pun">;</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//包装完成的BufferedSource</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="typ">BufferedSource</span><span class="pln">&nbsp;bufferedSource</span><span class="pun">;</span></li><li class="L3"><span class="pln">&nbsp;</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L5"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;构造函数，赋值</span></li><li class="L6"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;responseBody&nbsp;待包装的响应体</span></li><li class="L7"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;progressListener&nbsp;回调接口</span></li><li class="L8"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="typ">ProgressResponseBody</span><span class="pun">(</span><span class="typ">ResponseBody</span><span class="pln">&nbsp;responseBody</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="typ">ProgressResponseListener</span><span class="pln">&nbsp;progressListener</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">responseBody&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;responseBody</span><span class="pun">;</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">progressListener&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;progressListener</span><span class="pun">;</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L3"><span class="pln">&nbsp;</span></li><li class="L4"><span class="pln">&nbsp;</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L6"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;重写调用实际的响应体的contentType</span></li><li class="L7"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;MediaType</span></li><li class="L8"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span><span class="pln">&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="typ">MediaType</span><span class="pln">&nbsp;contentType</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;responseBody</span><span class="pun">.</span><span class="pln">contentType</span><span class="pun">();</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L2"><span class="pln">&nbsp;</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L4"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;重写调用实际的响应体的contentLength</span></li><li class="L5"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;contentLength</span></li><li class="L6"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@throws&nbsp;IOException&nbsp;异常</span></li><li class="L7"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span><span class="pln">&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="kwd">throws</span><span class="pln">&nbsp;</span><span class="typ">IOException</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;responseBody</span><span class="pun">.</span><span class="pln">contentLength</span><span class="pun">();</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L1"><span class="pln">&nbsp;</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L3"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;重写进行包装source</span></li><li class="L4"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;BufferedSource</span></li><li class="L5"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@throws&nbsp;IOException&nbsp;异常</span></li><li class="L6"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span><span class="pln">&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="typ">BufferedSource</span><span class="pln">&nbsp;source</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="kwd">throws</span><span class="pln">&nbsp;</span><span class="typ">IOException</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">if</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="pln">bufferedSource&nbsp;</span><span class="pun">==</span><span class="pln">&nbsp;</span><span class="kwd">null</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//包装</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bufferedSource&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="typ">Okio</span><span class="pun">.</span><span class="pln">buffer</span><span class="pun">(</span><span class="pln">source</span><span class="pun">(</span><span class="pln">responseBody</span><span class="pun">.</span><span class="pln">source</span><span class="pun">()));</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;bufferedSource</span><span class="pun">;</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L4"><span class="pln">&nbsp;</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L6"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;读取，回调进度接口</span></li><li class="L7"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;source&nbsp;Source</span></li><li class="L8"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;Source</span></li><li class="L9"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="typ">Source</span><span class="pln">&nbsp;source</span><span class="pun">(</span><span class="typ">Source</span><span class="pln">&nbsp;source</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L1"><span class="pln">&nbsp;</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">ForwardingSource</span><span class="pun">(</span><span class="pln">source</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//当前读取字节数</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;totalBytesRead&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="lit">0L</span><span class="pun">;</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span><span class="pln">&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;read</span><span class="pun">(</span><span class="typ">Buffer</span><span class="pln">&nbsp;sink</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;byteCount</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="kwd">throws</span><span class="pln">&nbsp;</span><span class="typ">IOException</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;bytesRead&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">super</span><span class="pun">.</span><span class="pln">read</span><span class="pun">(</span><span class="pln">sink</span><span class="pun">,</span><span class="pln">&nbsp;byteCount</span><span class="pun">);</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//增加当前读取的字节数，如果读取完成了bytesRead会返回-1</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;totalBytesRead&nbsp;</span><span class="pun">+=</span><span class="pln">&nbsp;bytesRead&nbsp;</span><span class="pun">!=</span><span class="pln">&nbsp;</span><span class="pun">-</span><span class="lit">1</span><span class="pln">&nbsp;</span><span class="pun">?</span><span class="pln">&nbsp;bytesRead&nbsp;</span><span class="pun">:</span><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pun">;</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//回调，如果contentLength()不知道长度，会返回-1</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;progressListener</span><span class="pun">.</span><span class="pln">onResponseProgress</span><span class="pun">(</span><span class="pln">totalBytesRead</span><span class="pun">,</span><span class="pln">&nbsp;responseBody</span><span class="pun">.</span><span class="pln">contentLength</span><span class="pun">(),</span><span class="pln">&nbsp;bytesRead&nbsp;</span><span class="pun">==</span><span class="pln">&nbsp;</span><span class="pun">-</span><span class="lit">1</span><span class="pun">);</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;bytesRead</span><span class="pun">;</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">};</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L5"><span class="pun">}</span></li></ol></pre><p>类似装饰器，我们对原始的ResponseBody&nbsp;进行了一层包装。并在其读取数据的时候设置了回调，回调的接口由构造函数传入，此外构造函数还传入了原始的ResponseBody，当系统内部调用了ResponseBody&nbsp;的source方法的时候，返回的便是我们包装后的Source。然后我们还重写了几个方法调用原始的ResponseBody对应的函数返回结果。</p><p>同理既然下载是这样，那么上传也应该是这样，我们乘热打铁完成上传的部分，下载是继承ResponseBody&nbsp;，上传就是继承RequestBody，同时也应该还有一个监听器。</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="com">/**</span></li><li class="L1"><span class="com">&nbsp;*&nbsp;请求体进度回调接口，比如用于文件上传中</span></li><li class="L2"><span class="com">&nbsp;*&nbsp;User:lizhangqu(513163535@qq.com)</span></li><li class="L3"><span class="com">&nbsp;*&nbsp;Date:2015-09-02</span></li><li class="L4"><span class="com">&nbsp;*&nbsp;Time:&nbsp;17:16</span></li><li class="L5"><span class="com">&nbsp;*/</span></li><li class="L6"><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">interface</span><span class="pln">&nbsp;</span><span class="typ">ProgressRequestListener</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onRequestProgress</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;bytesWritten</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">);</span></li><li class="L8"><span class="pun">}</span></li></ol></pre><p>RequestBody的子类实现类比ResponseBody&nbsp;，基本上复制一下稍加修改即可使用。</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="com">/**</span></li><li class="L1"><span class="com">&nbsp;*&nbsp;包装的请求体，处理进度</span></li><li class="L2"><span class="com">&nbsp;*&nbsp;User:lizhangqu(513163535@qq.com)</span></li><li class="L3"><span class="com">&nbsp;*&nbsp;Date:2015-09-02</span></li><li class="L4"><span class="com">&nbsp;*&nbsp;Time:&nbsp;17:15</span></li><li class="L5"><span class="com">&nbsp;*/</span></li><li class="L6"><span class="kwd">public</span><span class="pln">&nbsp;&nbsp;</span><span class="kwd">class</span><span class="pln">&nbsp;</span><span class="typ">ProgressRequestBody</span><span class="pln">&nbsp;</span><span class="kwd">extends</span><span class="pln">&nbsp;</span><span class="typ">RequestBody</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//实际的待包装请求体</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">RequestBody</span><span class="pln">&nbsp;requestBody</span><span class="pun">;</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//进度回调接口</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">ProgressRequestListener</span><span class="pln">&nbsp;progressListener</span><span class="pun">;</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//包装完成的BufferedSink</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="typ">BufferedSink</span><span class="pln">&nbsp;bufferedSink</span><span class="pun">;</span></li><li class="L3"><span class="pln">&nbsp;</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L5"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;构造函数，赋值</span></li><li class="L6"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;requestBody&nbsp;待包装的请求体</span></li><li class="L7"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;progressListener&nbsp;回调接口</span></li><li class="L8"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="typ">ProgressRequestBody</span><span class="pun">(</span><span class="typ">RequestBody</span><span class="pln">&nbsp;requestBody</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="typ">ProgressRequestListener</span><span class="pln">&nbsp;progressListener</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">requestBody&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;requestBody</span><span class="pun">;</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">progressListener&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;progressListener</span><span class="pun">;</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L3"><span class="pln">&nbsp;</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L5"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;重写调用实际的响应体的contentType</span></li><li class="L6"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;MediaType</span></li><li class="L7"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="typ">MediaType</span><span class="pln">&nbsp;contentType</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;requestBody</span><span class="pun">.</span><span class="pln">contentType</span><span class="pun">();</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L2"><span class="pln">&nbsp;</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L4"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;重写调用实际的响应体的contentLength</span></li><li class="L5"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;contentLength</span></li><li class="L6"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@throws&nbsp;IOException&nbsp;异常</span></li><li class="L7"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="kwd">throws</span><span class="pln">&nbsp;</span><span class="typ">IOException</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;requestBody</span><span class="pun">.</span><span class="pln">contentLength</span><span class="pun">();</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L2"><span class="pln">&nbsp;</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L4"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;重写进行写入</span></li><li class="L5"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;sink&nbsp;BufferedSink</span></li><li class="L6"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@throws&nbsp;IOException&nbsp;异常</span></li><li class="L7"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;writeTo</span><span class="pun">(</span><span class="typ">BufferedSink</span><span class="pln">&nbsp;sink</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="kwd">throws</span><span class="pln">&nbsp;</span><span class="typ">IOException</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">if</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="pln">bufferedSink&nbsp;</span><span class="pun">==</span><span class="pln">&nbsp;</span><span class="kwd">null</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//包装</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bufferedSink&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="typ">Okio</span><span class="pun">.</span><span class="pln">buffer</span><span class="pun">(</span><span class="pln">sink</span><span class="pun">(</span><span class="pln">sink</span><span class="pun">));</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//写入</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;requestBody</span><span class="pun">.</span><span class="pln">writeTo</span><span class="pun">(</span><span class="pln">bufferedSink</span><span class="pun">);</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//必须调用flush，否则最后一部分数据可能不会被写入</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bufferedSink</span><span class="pun">.</span><span class="pln">flush</span><span class="pun">();</span></li><li class="L8"><span class="pln">&nbsp;</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L0"><span class="pln">&nbsp;</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L2"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;写入，回调进度接口</span></li><li class="L3"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;sink&nbsp;Sink</span></li><li class="L4"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;Sink</span></li><li class="L5"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="typ">Sink</span><span class="pln">&nbsp;sink</span><span class="pun">(</span><span class="typ">Sink</span><span class="pln">&nbsp;sink</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">ForwardingSink</span><span class="pun">(</span><span class="pln">sink</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//当前写入字节数</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;bytesWritten&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="lit">0L</span><span class="pun">;</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//总字节长度，避免多次调用contentLength()方法</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="lit">0L</span><span class="pun">;</span></li><li class="L2"><span class="pln">&nbsp;</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;write</span><span class="pun">(</span><span class="typ">Buffer</span><span class="pln">&nbsp;source</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;byteCount</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="kwd">throws</span><span class="pln">&nbsp;</span><span class="typ">IOException</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">super</span><span class="pun">.</span><span class="pln">write</span><span class="pun">(</span><span class="pln">source</span><span class="pun">,</span><span class="pln">&nbsp;byteCount</span><span class="pun">);</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">if</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="pln">contentLength&nbsp;</span><span class="pun">==</span><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//获得contentLength的值，后续不再调用</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contentLength&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;contentLength</span><span class="pun">();</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//增加当前写入的字节数</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bytesWritten&nbsp;</span><span class="pun">+=</span><span class="pln">&nbsp;byteCount</span><span class="pun">;</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//回调</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;progressListener</span><span class="pun">.</span><span class="pln">onRequestProgress</span><span class="pun">(</span><span class="pln">bytesWritten</span><span class="pun">,</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;bytesWritten&nbsp;</span><span class="pun">==</span><span class="pln">&nbsp;contentLength</span><span class="pun">);</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">};</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L7"><span class="pun">}</span></li></ol></pre><p>内部维护了一个原始的RequestBody&nbsp;以及一个监听器，同样的也是由构造函数传入。当然也是要重写几个函数调用原始的RequestBody&nbsp;对应的函数，文件的下载是read函数中进行监听的设置，毫无疑问文件的上传就是write函数了，我们在write函数中进行了类似的操作，并回调了接口中的函数。当系统内部调用了RequestBody&nbsp;的writeTo函数时，我们对BufferedSink&nbsp;进行了一层包装，即设置了进度监听，并返回了我们包装的BufferedSink&nbsp;。于是乎，上传于下载的进度监听就完成了。</p><p>还有一个重要的问题就是</p><p>如何进行使用呢？</p><p>如何进行使用呢？</p><p>如何进行使用呢？</p><p>重要的事要说三遍。</p><p>我们还需要一个Helper类，对上传或者下载进行监听设置。文件的上传其实很简单，将我们的原始RequestBody和监听器&nbsp;传入，返回我们的包装的ProgressRequestBody&nbsp;，使用包装后的ProgressRequestBody&nbsp;进行请求即可，但是文件的下载呢，OkHttp给我们返回的是Response，我们如何将我们包装的ProgressResponseBody设置进去呢，答案之前已经说过了，就是拦截器，具体见代码吧。</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="com">/**</span></li><li class="L1"><span class="com">&nbsp;*&nbsp;进度回调辅助类</span></li><li class="L2"><span class="com">&nbsp;*&nbsp;User:lizhangqu(513163535@qq.com)</span></li><li class="L3"><span class="com">&nbsp;*&nbsp;Date:2015-09-02</span></li><li class="L4"><span class="com">&nbsp;*&nbsp;Time:&nbsp;17:33</span></li><li class="L5"><span class="com">&nbsp;*/</span></li><li class="L6"><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">class</span><span class="pln">&nbsp;</span><span class="typ">ProgressHelper</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L8"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;包装OkHttpClient，用于下载文件的回调</span></li><li class="L9"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;client&nbsp;待包装的OkHttpClient</span></li><li class="L0"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;progressListener&nbsp;进度回调接口</span></li><li class="L1"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;包装后的OkHttpClient，使用clone方法返回</span></li><li class="L2"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">static</span><span class="pln">&nbsp;</span><span class="typ">OkHttpClient</span><span class="pln">&nbsp;addProgressResponseListener</span><span class="pun">(</span><span class="typ">OkHttpClient</span><span class="pln">&nbsp;client</span><span class="pun">,</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">ProgressResponseListener</span><span class="pln">&nbsp;progressListener</span><span class="pun">){</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//克隆</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">OkHttpClient</span><span class="pln">&nbsp;clone&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;client</span><span class="pun">.</span><span class="pln">clone</span><span class="pun">();</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//增加拦截器</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;clone</span><span class="pun">.</span><span class="pln">networkInterceptors</span><span class="pun">().</span><span class="pln">add</span><span class="pun">(</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">Interceptor</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="typ">Response</span><span class="pln">&nbsp;intercept</span><span class="pun">(</span><span class="typ">Chain</span><span class="pln">&nbsp;chain</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="kwd">throws</span><span class="pln">&nbsp;</span><span class="typ">IOException</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//拦截</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Response</span><span class="pln">&nbsp;originalResponse&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;chain</span><span class="pun">.</span><span class="pln">proceed</span><span class="pun">(</span><span class="pln">chain</span><span class="pun">.</span><span class="pln">request</span><span class="pun">());</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//包装响应体并返回</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;originalResponse</span><span class="pun">.</span><span class="pln">newBuilder</span><span class="pun">()</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">.</span><span class="pln">body</span><span class="pun">(</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">ProgressResponseBody</span><span class="pun">(</span><span class="pln">originalResponse</span><span class="pun">.</span><span class="pln">body</span><span class="pun">(),</span><span class="pln">&nbsp;progressListener</span><span class="pun">))</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">.</span><span class="pln">build</span><span class="pun">();</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">});</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;clone</span><span class="pun">;</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L0"><span class="pln">&nbsp;</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L2"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;包装请求体用于上传文件的回调</span></li><li class="L3"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;requestBody&nbsp;请求体RequestBody</span></li><li class="L4"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;progressRequestListener&nbsp;进度回调接口</span></li><li class="L5"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;包装后的进度回调请求体</span></li><li class="L6"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">static</span><span class="pln">&nbsp;</span><span class="typ">ProgressRequestBody</span><span class="pln">&nbsp;addProgressRequestListener</span><span class="pun">(</span><span class="typ">RequestBody</span><span class="pln">&nbsp;requestBody</span><span class="pun">,</span><span class="typ">ProgressRequestListener</span><span class="pln">&nbsp;progressRequestListener</span><span class="pun">){</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//包装请求体</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">ProgressRequestBody</span><span class="pun">(</span><span class="pln">requestBody</span><span class="pun">,</span><span class="pln">progressRequestListener</span><span class="pun">);</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L1"><span class="pun">}</span></li></ol></pre><p>对于文件下载的监听器我们为了不影响原来的OkHttpClient 实例，我们调用clone方法进行了克隆，之后对克隆的方法设置了响应拦截，并返回该克隆的实例。而文件的上传则十分简单，直接包装后返回即可。</p><p>但是你别忘记了，我们的目的是在UI层进行回调，而OkHttp的所有请求都不在UI层。于是我们还要实现我们写的接口，进行UI操作的回调。由于涉及到消息机制，我们对之前的两个接口回调传的参数进行封装，封装为一个实体类便于传递。</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="com">/**</span></li><li class="L1"><span class="com">&nbsp;*&nbsp;UI进度回调实体类</span></li><li class="L2"><span class="com">&nbsp;*&nbsp;User:lizhangqu(513163535@qq.com)</span></li><li class="L3"><span class="com">&nbsp;*&nbsp;Date:2015-09-02</span></li><li class="L4"><span class="com">&nbsp;*&nbsp;Time:&nbsp;22:39</span></li><li class="L5"><span class="com">&nbsp;*/</span></li><li class="L6"><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">class</span><span class="pln">&nbsp;</span><span class="typ">ProgressModel</span><span class="pln">&nbsp;</span><span class="kwd">implements</span><span class="pln">&nbsp;</span><span class="typ">Serializable</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//当前读取字节长度</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;currentBytes</span><span class="pun">;</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//总字节长度</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">;</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//是否读取完成</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">;</span></li><li class="L3"><span class="pln">&nbsp;</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="typ">ProgressModel</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;currentBytes</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">currentBytes&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;currentBytes</span><span class="pun">;</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">contentLength&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;contentLength</span><span class="pun">;</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">this</span><span class="pun">.</span><span class="kwd">done</span><span class="pln">&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">;</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L9"><span class="pln">&nbsp;</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;getCurrentBytes</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;currentBytes</span><span class="pun">;</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L3"><span class="pln">&nbsp;</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;setCurrentBytes</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;currentBytes</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">currentBytes&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;currentBytes</span><span class="pun">;</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L7"><span class="pln">&nbsp;</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;getContentLength</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;contentLength</span><span class="pun">;</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L1"><span class="pln">&nbsp;</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;setContentLength</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">contentLength&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;contentLength</span><span class="pun">;</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L5"><span class="pln">&nbsp;</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;isDone</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">;</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L9"><span class="pln">&nbsp;</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;setDone</span><span class="pun">(</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">this</span><span class="pun">.</span><span class="kwd">done</span><span class="pln">&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">;</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L3"><span class="pln">&nbsp;</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="typ">String</span><span class="pln">&nbsp;toString</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">return</span><span class="pln">&nbsp;</span><span class="str">"ProgressModel{"</span><span class="pln">&nbsp;</span><span class="pun">+</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="str">"currentBytes="</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;currentBytes&nbsp;</span><span class="pun">+</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="str">",&nbsp;contentLength="</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;contentLength&nbsp;</span><span class="pun">+</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="str">",&nbsp;done="</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pln">&nbsp;</span><span class="pun">+</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="str">'}'</span><span class="pun">;</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L2"><span class="pun">}</span></li></ol></pre><p>再实现我们的UI回调接口，对于文件的上传，我们需要实现的是ProgressRequestListener接口，文件的下载需要实现的是ProgressResponseListener接口，但是内部的逻辑处理是完全一样的。我们使用抽象类，提供一个抽象方法，该抽象方法用于UI层回调的处理，由具体开发去实现。涉及到消息机制就涉及到Handler类，在Handler的子类中维护一个弱引用指向外部类（<strong>用到了static防止内存泄露，但是需要调用外部类的一个非静态函数，所以将外部类引用直接由构造函数传入，在内部通过调用该引用的方法去实现</strong>），然后将主线程的Looper传入，调用父类构造函数。在onRequestProgress中发送进度更新的消息，在handleMessage函数中回调我们的抽象方法。我们只需要实现抽象方法，编写对应的UI更新代码即可。具体代码如下。</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="com">/**</span></li><li class="L1"><span class="com">&nbsp;*&nbsp;请求体回调实现类，用于UI层回调</span></li><li class="L2"><span class="com">&nbsp;*&nbsp;User:lizhangqu(513163535@qq.com)</span></li><li class="L3"><span class="com">&nbsp;*&nbsp;Date:2015-09-02</span></li><li class="L4"><span class="com">&nbsp;*&nbsp;Time:&nbsp;22:34</span></li><li class="L5"><span class="com">&nbsp;*/</span></li><li class="L6"><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">abstract</span><span class="pln">&nbsp;</span><span class="kwd">class</span><span class="pln">&nbsp;</span><span class="typ">UIProgressRequestListener</span><span class="pln">&nbsp;</span><span class="kwd">implements</span><span class="pln">&nbsp;</span><span class="typ">ProgressRequestListener</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">static</span><span class="pln">&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="kwd">int</span><span class="pln">&nbsp;REQUEST_UPDATE&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="lit">0x01</span><span class="pun">;</span></li><li class="L8"><span class="pln">&nbsp;</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//处理UI层的Handler子类</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">static</span><span class="pln">&nbsp;</span><span class="kwd">class</span><span class="pln">&nbsp;</span><span class="typ">UIHandler</span><span class="pln">&nbsp;</span><span class="kwd">extends</span><span class="pln">&nbsp;</span><span class="typ">Handler</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//弱引用</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">WeakReference</span><span class="pun">&lt;</span><span class="typ">UIProgressRequestListener</span><span class="pun">&gt;</span><span class="pln">&nbsp;mUIProgressRequestListenerWeakReference</span><span class="pun">;</span></li><li class="L3"><span class="pln">&nbsp;</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="typ">UIHandler</span><span class="pun">(</span><span class="typ">Looper</span><span class="pln">&nbsp;looper</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="typ">UIProgressRequestListener</span><span class="pln">&nbsp;uiProgressRequestListener</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">super</span><span class="pun">(</span><span class="pln">looper</span><span class="pun">);</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mUIProgressRequestListenerWeakReference&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">WeakReference</span><span class="pun">&lt;</span><span class="typ">UIProgressRequestListener</span><span class="pun">&gt;(</span><span class="pln">uiProgressRequestListener</span><span class="pun">);</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L8"><span class="pln">&nbsp;</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;handleMessage</span><span class="pun">(</span><span class="typ">Message</span><span class="pln">&nbsp;msg</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">switch</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="pln">msg</span><span class="pun">.</span><span class="pln">what</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">case</span><span class="pln">&nbsp;REQUEST_UPDATE</span><span class="pun">:</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">UIProgressRequestListener</span><span class="pln">&nbsp;uiProgressRequestListener&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;mUIProgressRequestListenerWeakReference</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">();</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">if</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="pln">uiProgressRequestListener&nbsp;</span><span class="pun">!=</span><span class="pln">&nbsp;</span><span class="kwd">null</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//获得进度实体类</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">ProgressModel</span><span class="pln">&nbsp;progressModel&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="typ">ProgressModel</span><span class="pun">)</span><span class="pln">&nbsp;msg</span><span class="pun">.</span><span class="pln">obj</span><span class="pun">;</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//回调抽象方法</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uiProgressRequestListener</span><span class="pun">.</span><span class="pln">onUIRequestProgress</span><span class="pun">(</span><span class="pln">progressModel</span><span class="pun">.</span><span class="pln">getCurrentBytes</span><span class="pun">(),</span><span class="pln">&nbsp;progressModel</span><span class="pun">.</span><span class="pln">getContentLength</span><span class="pun">(),</span><span class="pln">&nbsp;progressModel</span><span class="pun">.</span><span class="pln">isDone</span><span class="pun">());</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">break</span><span class="pun">;</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">default</span><span class="pun">:</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">super</span><span class="pun">.</span><span class="pln">handleMessage</span><span class="pun">(</span><span class="pln">msg</span><span class="pun">);</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">break</span><span class="pun">;</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//主线程Handler</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">Handler</span><span class="pln">&nbsp;mHandler&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">UIHandler</span><span class="pun">(</span><span class="typ">Looper</span><span class="pun">.</span><span class="pln">getMainLooper</span><span class="pun">(),</span><span class="pln">&nbsp;</span><span class="kwd">this</span><span class="pun">);</span></li><li class="L9"><span class="pln">&nbsp;</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onRequestProgress</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;bytesRead</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//通过Handler发送进度消息</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Message</span><span class="pln">&nbsp;message&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="typ">Message</span><span class="pun">.</span><span class="pln">obtain</span><span class="pun">();</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message</span><span class="pun">.</span><span class="pln">obj&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">ProgressModel</span><span class="pun">(</span><span class="pln">bytesRead</span><span class="pun">,</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">);</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message</span><span class="pun">.</span><span class="pln">what&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;REQUEST_UPDATE</span><span class="pun">;</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mHandler</span><span class="pun">.</span><span class="pln">sendMessage</span><span class="pun">(</span><span class="pln">message</span><span class="pun">);</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L8"><span class="pln">&nbsp;</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L0"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;UI层回调抽象方法</span></li><li class="L1"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;bytesWrite&nbsp;当前写入的字节长度</span></li><li class="L2"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;contentLength&nbsp;总字节长度</span></li><li class="L3"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;done&nbsp;是否写入完成</span></li><li class="L4"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">abstract</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onUIRequestProgress</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;bytesWrite</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">);</span></li><li class="L6"><span class="pun">}</span></li></ol></pre><p>另一个实现类代码雷同，不做叙述。</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="com">/**</span></li><li class="L1"><span class="com">&nbsp;*&nbsp;请求体回调实现类，用于UI层回调</span></li><li class="L2"><span class="com">&nbsp;*&nbsp;User:lizhangqu(513163535@qq.com)</span></li><li class="L3"><span class="com">&nbsp;*&nbsp;Date:2015-09-02</span></li><li class="L4"><span class="com">&nbsp;*&nbsp;Time:&nbsp;22:34</span></li><li class="L5"><span class="com">&nbsp;*/</span></li><li class="L6"><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">abstract</span><span class="pln">&nbsp;</span><span class="kwd">class</span><span class="pln">&nbsp;</span><span class="typ">UIProgressResponseListener</span><span class="pln">&nbsp;</span><span class="kwd">implements</span><span class="pln">&nbsp;</span><span class="typ">ProgressResponseListener</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">static</span><span class="pln">&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="kwd">int</span><span class="pln">&nbsp;RESPONSE_UPDATE&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="lit">0x02</span><span class="pun">;</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//处理UI层的Handler子类</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">static</span><span class="pln">&nbsp;</span><span class="kwd">class</span><span class="pln">&nbsp;</span><span class="typ">UIHandler</span><span class="pln">&nbsp;</span><span class="kwd">extends</span><span class="pln">&nbsp;</span><span class="typ">Handler</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//弱引用</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">WeakReference</span><span class="pun">&lt;</span><span class="typ">UIProgressResponseListener</span><span class="pun">&gt;</span><span class="pln">&nbsp;mUIProgressResponseListenerWeakReference</span><span class="pun">;</span></li><li class="L2"><span class="pln">&nbsp;</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="typ">UIHandler</span><span class="pun">(</span><span class="typ">Looper</span><span class="pln">&nbsp;looper</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="typ">UIProgressResponseListener</span><span class="pln">&nbsp;uiProgressResponseListener</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">super</span><span class="pun">(</span><span class="pln">looper</span><span class="pun">);</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mUIProgressResponseListenerWeakReference&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">WeakReference</span><span class="pun">&lt;</span><span class="typ">UIProgressResponseListener</span><span class="pun">&gt;(</span><span class="pln">uiProgressResponseListener</span><span class="pun">);</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L7"><span class="pln">&nbsp;</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;handleMessage</span><span class="pun">(</span><span class="typ">Message</span><span class="pln">&nbsp;msg</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">switch</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="pln">msg</span><span class="pun">.</span><span class="pln">what</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">case</span><span class="pln">&nbsp;RESPONSE_UPDATE</span><span class="pun">:</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">UIProgressResponseListener</span><span class="pln">&nbsp;uiProgressResponseListener&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;mUIProgressResponseListenerWeakReference</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">();</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">if</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="pln">uiProgressResponseListener&nbsp;</span><span class="pun">!=</span><span class="pln">&nbsp;</span><span class="kwd">null</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//获得进度实体类</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">ProgressModel</span><span class="pln">&nbsp;progressModel&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="typ">ProgressModel</span><span class="pun">)</span><span class="pln">&nbsp;msg</span><span class="pun">.</span><span class="pln">obj</span><span class="pun">;</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//回调抽象方法</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uiProgressResponseListener</span><span class="pun">.</span><span class="pln">onUIResponseProgress</span><span class="pun">(</span><span class="pln">progressModel</span><span class="pun">.</span><span class="pln">getCurrentBytes</span><span class="pun">(),</span><span class="pln">&nbsp;progressModel</span><span class="pun">.</span><span class="pln">getContentLength</span><span class="pun">(),</span><span class="pln">&nbsp;progressModel</span><span class="pun">.</span><span class="pln">isDone</span><span class="pun">());</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">break</span><span class="pun">;</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">default</span><span class="pun">:</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">super</span><span class="pun">.</span><span class="pln">handleMessage</span><span class="pun">(</span><span class="pln">msg</span><span class="pun">);</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">break</span><span class="pun">;</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//主线程Handler</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">Handler</span><span class="pln">&nbsp;mHandler&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">UIHandler</span><span class="pun">(</span><span class="typ">Looper</span><span class="pun">.</span><span class="pln">getMainLooper</span><span class="pun">(),</span><span class="pln">&nbsp;</span><span class="kwd">this</span><span class="pun">);</span></li><li class="L8"><span class="pln">&nbsp;</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onResponseProgress</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;bytesRead</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//通过Handler发送进度消息</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Message</span><span class="pln">&nbsp;message&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="typ">Message</span><span class="pun">.</span><span class="pln">obtain</span><span class="pun">();</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message</span><span class="pun">.</span><span class="pln">obj&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">ProgressModel</span><span class="pun">(</span><span class="pln">bytesRead</span><span class="pun">,</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">);</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message</span><span class="pun">.</span><span class="pln">what&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;RESPONSE_UPDATE</span><span class="pun">;</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mHandler</span><span class="pun">.</span><span class="pln">sendMessage</span><span class="pun">(</span><span class="pln">message</span><span class="pun">);</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L7"><span class="pln">&nbsp;</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">/**</span></li><li class="L9"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;UI层回调抽象方法</span></li><li class="L0"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;bytesRead&nbsp;当前读取响应体字节长度</span></li><li class="L1"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;contentLength&nbsp;总字节长度</span></li><li class="L2"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;done&nbsp;是否读取完成</span></li><li class="L3"><span class="com">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">abstract</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onUIResponseProgress</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;bytesRead</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">);</span></li><li class="L5"><span class="pun">}</span></li></ol></pre><p>最简单的一步就是在我们的程序中使用了。为了方便Android Studio用户使用，我将其发布到了<strong>中央库</strong>。加入如下依赖即可</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="pln">dependencies&nbsp;</span><span class="pun">{</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;compile&nbsp;</span><span class="str">'cn.edu.zafu:coreprogress:0.0.1'</span></li><li class="L2"><span class="pun">}</span></li></ol></pre><p><strong>注意OkHttp的依赖需要自己手动添加，这个库中OkHttp只是编译时依赖，并没有打包进去。</strong></p><p>至于代码，也已经寄托在了github上，如果有bug，欢迎修正。<a href="https://github.com/lizhangqu/CoreProgress">https://github.com/lizhangqu/CoreProgress</a>，具体使用方法github上也已经贴出来了。</p><p>如果依赖gradle不能下载的话可以直接从github上下代码。</p><p>这里贴一个简单的例子，布局文件，两个进度条用于显示进度</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="tag">&lt;LinearLayout</span><span class="pln">&nbsp;</span><span class="atn">xmlns:android</span><span class="pun">=</span><span class="atv">"http://schemas.android.com/apk/res/android"</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">xmlns:tools</span><span class="pun">=</span><span class="atv">"http://schemas.android.com/tools"</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:layout_width</span><span class="pun">=</span><span class="atv">"match_parent"</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:layout_height</span><span class="pun">=</span><span class="atv">"match_parent"</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:orientation</span><span class="pun">=</span><span class="atv">"vertical"</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">tools:context</span><span class="pun">=</span><span class="atv">".MainActivity"</span><span class="tag">&gt;</span></li><li class="L6"><span class="pln">&nbsp;</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tag">&lt;ProgressBar</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@+id/upload_progress"</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">style</span><span class="pun">=</span><span class="atv">"</span><span class="pun">?</span><span class="pln">android</span><span class="pun">:</span><span class="pln">attr</span><span class="pun">/</span><span class="pln">progressBarStyleHorizontal</span><span class="atv">"</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:layout_width</span><span class="pun">=</span><span class="atv">"match_parent"</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:layout_height</span><span class="pun">=</span><span class="atv">"wrap_content"</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:max</span><span class="pun">=</span><span class="atv">"100"</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:progress</span><span class="pun">=</span><span class="atv">"0"</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tag">/&gt;</span></li><li class="L5"><span class="pln">&nbsp;</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tag">&lt;Button</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@+id/upload"</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:layout_width</span><span class="pun">=</span><span class="atv">"match_parent"</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:layout_height</span><span class="pun">=</span><span class="atv">"wrap_content"</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:text</span><span class="pun">=</span><span class="atv">"Upload"</span><span class="tag">/&gt;</span></li><li class="L1"><span class="pln">&nbsp;</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tag">&lt;ProgressBar</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@+id/download_progress"</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">style</span><span class="pun">=</span><span class="atv">"</span><span class="pun">?</span><span class="pln">android</span><span class="pun">:</span><span class="pln">attr</span><span class="pun">/</span><span class="pln">progressBarStyleHorizontal</span><span class="atv">"</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:layout_width</span><span class="pun">=</span><span class="atv">"match_parent"</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:layout_height</span><span class="pun">=</span><span class="atv">"wrap_content"</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:max</span><span class="pun">=</span><span class="atv">"100"</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:progress</span><span class="pun">=</span><span class="atv">"0"</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tag">/&gt;</span></li><li class="L0"><span class="pln">&nbsp;</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tag">&lt;Button</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:id</span><span class="pun">=</span><span class="atv">"@+id/download"</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:layout_width</span><span class="pun">=</span><span class="atv">"match_parent"</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:layout_height</span><span class="pun">=</span><span class="atv">"wrap_content"</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="atn">android:text</span><span class="pun">=</span><span class="atv">"Download"</span><span class="tag">/&gt;</span></li><li class="L6"><span class="pln">&nbsp;</span></li><li class="L7"><span class="pln">&nbsp;</span></li><li class="L8"><span class="tag">&lt;/LinearLayout&gt;</span></li></ol></pre><p>一个上传操作，一个下载操作，分别提供了UI层与非UI层回调的示例。最终代码中使用的监听器都是UI层的，因为我们要更新进度条。</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;download</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//这个是非ui线程回调，不可直接操作UI</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">ProgressResponseListener</span><span class="pln">&nbsp;progressResponseListener&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">ProgressResponseListener</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onResponseProgress</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;bytesRead</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"bytesRead:"</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;bytesRead</span><span class="pun">);</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"contentLength:"</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;contentLength</span><span class="pun">);</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"done:"</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">);</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">if</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="pln">contentLength&nbsp;</span><span class="pun">!=</span><span class="pln">&nbsp;</span><span class="pun">-</span><span class="lit">1</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//长度未知的情况下回返回-1</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="lit">100</span><span class="pln">&nbsp;</span><span class="pun">*</span><span class="pln">&nbsp;bytesRead</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">/</span><span class="pln">&nbsp;contentLength&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;</span><span class="str">"%&nbsp;done"</span><span class="pun">);</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"================================"</span><span class="pun">);</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">};</span></li><li class="L5"><span class="pln">&nbsp;</span></li><li class="L6"><span class="pln">&nbsp;</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//这个是ui线程回调，可直接操作UI</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">UIProgressResponseListener</span><span class="pln">&nbsp;uiProgressResponseListener&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">UIProgressResponseListener</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onUIResponseProgress</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;bytesRead</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"bytesRead:"</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;bytesRead</span><span class="pun">);</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"contentLength:"</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;contentLength</span><span class="pun">);</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"done:"</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">);</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">if</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="pln">contentLength&nbsp;</span><span class="pun">!=</span><span class="pln">&nbsp;</span><span class="pun">-</span><span class="lit">1</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//长度未知的情况下回返回-1</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="lit">100</span><span class="pln">&nbsp;</span><span class="pun">*</span><span class="pln">&nbsp;bytesRead</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">/</span><span class="pln">&nbsp;contentLength&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;</span><span class="str">"%&nbsp;done"</span><span class="pun">);</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"================================"</span><span class="pun">);</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//ui层回调</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;downloadProgeress</span><span class="pun">.</span><span class="pln">setProgress</span><span class="pun">((</span><span class="kwd">int</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">((</span><span class="lit">100</span><span class="pln">&nbsp;</span><span class="pun">*</span><span class="pln">&nbsp;bytesRead</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">/</span><span class="pln">&nbsp;contentLength</span><span class="pun">));</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//Toast.makeText(getApplicationContext(),&nbsp;bytesRead&nbsp;+&nbsp;"&nbsp;"&nbsp;+&nbsp;contentLength&nbsp;+&nbsp;"&nbsp;"&nbsp;+&nbsp;done,&nbsp;Toast.LENGTH_LONG).show();</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">};</span></li><li class="L4"><span class="pln">&nbsp;</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//构造请求</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">Request</span><span class="pln">&nbsp;request1&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">Request</span><span class="pun">.</span><span class="typ">Builder</span><span class="pun">()</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">.</span><span class="pln">url</span><span class="pun">(</span><span class="str">"http://121.41.119.107:81/test/1.doc"</span><span class="pun">)</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">.</span><span class="pln">build</span><span class="pun">();</span></li><li class="L9"><span class="pln">&nbsp;</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//包装Response使其支持进度回调</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">ProgressHelper</span><span class="pun">.</span><span class="pln">addProgressResponseListener</span><span class="pun">(</span><span class="pln">client</span><span class="pun">,</span><span class="pln">&nbsp;uiProgressResponseListener</span><span class="pun">).</span><span class="pln">newCall</span><span class="pun">(</span><span class="pln">request1</span><span class="pun">).</span><span class="pln">enqueue</span><span class="pun">(</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">Callback</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onFailure</span><span class="pun">(</span><span class="typ">Request</span><span class="pln">&nbsp;request</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="typ">IOException</span><span class="pln">&nbsp;e</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"error&nbsp;"</span><span class="pun">,</span><span class="pln">&nbsp;e</span><span class="pun">);</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L6"><span class="pln">&nbsp;</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onResponse</span><span class="pun">(</span><span class="typ">Response</span><span class="pln">&nbsp;response</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="kwd">throws</span><span class="pln">&nbsp;</span><span class="typ">IOException</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;response</span><span class="pun">.</span><span class="pln">body</span><span class="pun">().</span><span class="kwd">string</span><span class="pun">());</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">});</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L3"><span class="pln">&nbsp;</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;upload</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">File</span><span class="pln">&nbsp;file&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">File</span><span class="pun">(</span><span class="str">"/sdcard/1.doc"</span><span class="pun">);</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//此文件必须在手机上存在，实际情况下请自行修改，这个目录下的文件只是在我手机中存在。</span></li><li class="L7"><span class="pln">&nbsp;</span></li><li class="L8"><span class="pln">&nbsp;</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//这个是非ui线程回调，不可直接操作UI</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">ProgressRequestListener</span><span class="pln">&nbsp;progressListener&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">ProgressRequestListener</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onRequestProgress</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;bytesWrite</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"bytesWrite:"</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;bytesWrite</span><span class="pun">);</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"contentLength"</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;contentLength</span><span class="pun">);</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="lit">100</span><span class="pln">&nbsp;</span><span class="pun">*</span><span class="pln">&nbsp;bytesWrite</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">/</span><span class="pln">&nbsp;contentLength&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;</span><span class="str">"&nbsp;%&nbsp;done&nbsp;"</span><span class="pun">);</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"done:"</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">);</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"================================"</span><span class="pun">);</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">};</span></li><li class="L0"><span class="pln">&nbsp;</span></li><li class="L1"><span class="pln">&nbsp;</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//这个是ui线程回调，可直接操作UI</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">UIProgressRequestListener</span><span class="pln">&nbsp;uiProgressRequestListener&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">UIProgressRequestListener</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onUIRequestProgress</span><span class="pun">(</span><span class="kwd">long</span><span class="pln">&nbsp;bytesWrite</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">long</span><span class="pln">&nbsp;contentLength</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="kwd">boolean</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"bytesWrite:"</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;bytesWrite</span><span class="pun">);</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"contentLength"</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;contentLength</span><span class="pun">);</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="pun">(</span><span class="lit">100</span><span class="pln">&nbsp;</span><span class="pun">*</span><span class="pln">&nbsp;bytesWrite</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">/</span><span class="pln">&nbsp;contentLength&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;</span><span class="str">"&nbsp;%&nbsp;done&nbsp;"</span><span class="pun">);</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"done:"</span><span class="pln">&nbsp;</span><span class="pun">+</span><span class="pln">&nbsp;</span><span class="kwd">done</span><span class="pun">);</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"================================"</span><span class="pun">);</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//ui层回调</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uploadProgress</span><span class="pun">.</span><span class="pln">setProgress</span><span class="pun">((</span><span class="kwd">int</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">((</span><span class="lit">100</span><span class="pln">&nbsp;</span><span class="pun">*</span><span class="pln">&nbsp;bytesWrite</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">/</span><span class="pln">&nbsp;contentLength</span><span class="pun">));</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//Toast.makeText(getApplicationContext(),&nbsp;bytesWrite&nbsp;+&nbsp;"&nbsp;"&nbsp;+&nbsp;contentLength&nbsp;+&nbsp;"&nbsp;"&nbsp;+&nbsp;done,&nbsp;Toast.LENGTH_LONG).show();</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">};</span></li><li class="L6"><span class="pln">&nbsp;</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//构造上传请求，类似web表单</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">RequestBody</span><span class="pln">&nbsp;requestBody&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">MultipartBuilder</span><span class="pun">().</span><span class="pln">type</span><span class="pun">(</span><span class="typ">MultipartBuilder</span><span class="pun">.</span><span class="pln">FORM</span><span class="pun">)</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">.</span><span class="pln">addFormDataPart</span><span class="pun">(</span><span class="str">"hello"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"android"</span><span class="pun">)</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">.</span><span class="pln">addFormDataPart</span><span class="pun">(</span><span class="str">"photo"</span><span class="pun">,</span><span class="pln">&nbsp;file</span><span class="pun">.</span><span class="pln">getName</span><span class="pun">(),</span><span class="pln">&nbsp;</span><span class="typ">RequestBody</span><span class="pun">.</span><span class="pln">create</span><span class="pun">(</span><span class="kwd">null</span><span class="pun">,</span><span class="pln">&nbsp;file</span><span class="pun">))</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">.</span><span class="pln">addPart</span><span class="pun">(</span><span class="typ">Headers</span><span class="pun">.</span><span class="pln">of</span><span class="pun">(</span><span class="str">"Content-Disposition"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"form-data;&nbsp;name=\"another\";filename=\"another.dex\""</span><span class="pun">),</span><span class="pln">&nbsp;</span><span class="typ">RequestBody</span><span class="pun">.</span><span class="pln">create</span><span class="pun">(</span><span class="typ">MediaType</span><span class="pun">.</span><span class="pln">parse</span><span class="pun">(</span><span class="str">"application/octet-stream"</span><span class="pun">),</span><span class="pln">&nbsp;file</span><span class="pun">))</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">.</span><span class="pln">build</span><span class="pun">();</span></li><li class="L3"><span class="pln">&nbsp;</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//进行包装，使其支持进度回调</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">final</span><span class="pln">&nbsp;</span><span class="typ">Request</span><span class="pln">&nbsp;request&nbsp;</span><span class="pun">=</span><span class="pln">&nbsp;</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">Request</span><span class="pun">.</span><span class="typ">Builder</span><span class="pun">().</span><span class="pln">url</span><span class="pun">(</span><span class="str">"http://121.41.119.107:81/test/result.php"</span><span class="pun">).</span><span class="pln">post</span><span class="pun">(</span><span class="typ">ProgressHelper</span><span class="pun">.</span><span class="pln">addProgressRequestListener</span><span class="pun">(</span><span class="pln">requestBody</span><span class="pun">,</span><span class="pln">&nbsp;uiProgressRequestListener</span><span class="pun">)).</span><span class="pln">build</span><span class="pun">();</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="com">//开始请求</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;client</span><span class="pun">.</span><span class="pln">newCall</span><span class="pun">(</span><span class="pln">request</span><span class="pun">).</span><span class="pln">enqueue</span><span class="pun">(</span><span class="kwd">new</span><span class="pln">&nbsp;</span><span class="typ">Callback</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L8"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onFailure</span><span class="pun">(</span><span class="typ">Request</span><span class="pln">&nbsp;request</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="typ">IOException</span><span class="pln">&nbsp;e</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L0"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="str">"error&nbsp;"</span><span class="pun">,</span><span class="pln">&nbsp;e</span><span class="pun">);</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L2"><span class="pln">&nbsp;</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="lit">@Override</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">public</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;onResponse</span><span class="pun">(</span><span class="typ">Response</span><span class="pln">&nbsp;response</span><span class="pun">)</span><span class="pln">&nbsp;</span><span class="kwd">throws</span><span class="pln">&nbsp;</span><span class="typ">IOException</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="typ">Log</span><span class="pun">.</span><span class="pln">e</span><span class="pun">(</span><span class="str">"TAG"</span><span class="pun">,</span><span class="pln">&nbsp;response</span><span class="pun">.</span><span class="pln">body</span><span class="pun">().</span><span class="kwd">string</span><span class="pun">());</span></li><li class="L6"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li><li class="L7"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">});</span></li><li class="L8"><span class="pln">&nbsp;</span></li><li class="L9"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li></ol></pre><p>需要特别注意的一点是文件的下载中如果文件大小未知，contentLength&nbsp;会始终返回-1，对于已知文件大小的情况下，它返回的是实际文件大小。但是done只要在文件下载完成后才会返回true，可以使用两者的结合进行判断文件是否下载完成。</p><p>当然，我们进行进度的监听，最终还是会回调内部的接口，如果请求成功会回调onResponse，请求失败则回调onFailure，我们可以在onResponse中处理最终的结果。比如提示用户上传完成或者下载完成等等 。</p><p>还有一个细节需要注意就是连接的超时，读取与写入数据的超时时间的设置，在读取或者写入一些大文件的时候如果不设置这个参数可能会报异常，这里就随便设置了一下值，设得有点大，实际情况按需设置。</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="com">//设置超时，不设置可能会报异常</span></li><li class="L1"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kwd">private</span><span class="pln">&nbsp;</span><span class="kwd">void</span><span class="pln">&nbsp;initClient</span><span class="pun">()</span><span class="pln">&nbsp;</span><span class="pun">{</span></li><li class="L2"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;client</span><span class="pun">.</span><span class="pln">setConnectTimeout</span><span class="pun">(</span><span class="lit">1000</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="typ">TimeUnit</span><span class="pun">.</span><span class="pln">MINUTES</span><span class="pun">);</span></li><li class="L3"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;client</span><span class="pun">.</span><span class="pln">setReadTimeout</span><span class="pun">(</span><span class="lit">1000</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="typ">TimeUnit</span><span class="pun">.</span><span class="pln">MINUTES</span><span class="pun">);</span></li><li class="L4"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;client</span><span class="pun">.</span><span class="pln">setWriteTimeout</span><span class="pun">(</span><span class="lit">1000</span><span class="pun">,</span><span class="pln">&nbsp;</span><span class="typ">TimeUnit</span><span class="pun">.</span><span class="pln">MINUTES</span><span class="pun">);</span></li><li class="L5"><span class="pln">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="pun">}</span></li></ol></pre><p>文件的上传需要服务器的配合，为了证明PHP是世界上最好的语言，服务器的操作使用PHP大法，其实就是简单的输出POST的内容和文件的信息，并将一个文件保存到了服务器当前目录下的file文件夹下。</p><pre class="brush:js;toolbar:false prettyprint linenums prettyprinted" style="overflow: auto;"><ol class="linenums"><li class="L0"><span class="pun">&lt;?</span><span class="pln">php</span></li><li class="L1"><span class="pln">&nbsp;</span></li><li class="L2"><span class="com">//打印POST传递的参数</span></li><li class="L3"><span class="pln">var_dump</span><span class="pun">(</span><span class="pln">$_POST</span><span class="pun">);</span></li><li class="L4"><span class="pln">&nbsp;</span></li><li class="L5"><span class="com">//打印文件信息</span></li><li class="L6"><span class="pln">var_dump</span><span class="pun">(</span><span class="pln">$_FILES</span><span class="pun">);</span></li><li class="L7"><span class="pln">&nbsp;</span></li><li class="L8"><span class="com">//将文件保存到当前目录下的file文件夹下</span></li><li class="L9"><span class="pln">move_uploaded_file</span><span class="pun">(</span><span class="pln">$_FILES</span><span class="pun">[</span><span class="str">"photo"</span><span class="pun">][</span><span class="str">"tmp_name"</span><span class="pun">],</span><span class="pln">&nbsp;</span><span class="str">"./file/"</span><span class="pun">.</span><span class="pln">$_FILES</span><span class="pun">[</span><span class="str">"photo"</span><span class="pun">][</span><span class="str">"name"</span><span class="pun">]);</span></li><li class="L0"><span class="pln">&nbsp;</span></li><li class="L1"><span class="pun">?&gt;</span></li></ol></pre><p>下面是运行结果，可以看到点击了上传或者下载后，进度条在不断更新。</p><p><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/1441333776499211.gif" title="1441333776499211.gif" alt="20150903142847687.gif"></p><p>以及对应的日志输出。</p><p>文件的上传，用数据说话</p><p><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/1441333798113152.png" title="1441333798113152.png" alt="blob.png"></p><p>文件的下载，同样是数据</p><p><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/1441333816112364.png" title="1441333816112364.png" alt="blob.png"></p><p>如果这篇文章对你有用，那么请点击下方的顶支持一个吧。</p><p>源代码什么的就不再贴了，直接从github上下载吧<a href="https://github.com/lizhangqu/CoreProgress">https://github.com/lizhangqu/CoreProgress</a></p><p><br></p><p><br></p>
+				</div>
+			 
+				<div class="pageActive" id="newdigg"><a href="javascript:void(0)" class="pageActive-item" onclick="postStow(3416)"><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>收藏</a>
+			<a href="javascript:void(0)" class="pageActive-item" onclick="postDigg(&#39;good&#39;,3416)"> <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>赞(85)</a>
+			<a href="javascript:void(0)" class="pageActive-item" onclick="postDigg(&#39;bad&#39;,3416)"> <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>踩(3)</a>
+          							
+				</div>				
+						
+				<div class="related_arc">
+					<h3>相关文章</h3>
+					<div class="rearc_list clearfix">
+						<ul>                          
+						<li>
+							 <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0326/2643.html" target="_blank">OKHttp源码解析</a>  <span class="pull-right"> 2015-03-26 </span></li>
+<li>
+							 <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0831/3393.html" target="_blank">Android Https相关完全解析 当OkHttp遇到Https</a>  <span class="pull-right"> 2015-08-31 </span></li>
+<li>
+							 <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2016/0105/3831.html" target="_blank">OkHttp的使用简介及封装，实现更简洁的调用</a>  <span class="pull-right"> 2016-01-05 </span></li>
+<li>
+							 <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0720/3203.html" target="_blank">使用OKHttp处理Volley的底层HTTP请求</a>  <span class="pull-right"> 2015-07-21 </span></li>
+<li>
+							 <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1111/3678.html" target="_blank"> okHttp，GreenDao，EventBus简单封装使用</a>  <span class="pull-right"> 2015-11-12 </span></li>
+<li>
+							 <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2016/0222/3988.html" target="_blank">如何更高效地使用 OkHttp</a>  <span class="pull-right"> 2016-02-22 </span></li>
+<li>
+							 <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0106/2275.html" target="_blank">OkHttp使用教程</a>  <span class="pull-right"> 2015-01-06 </span></li>
+<li>
+							 <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0824/3355.html" target="_blank">Android OkHttp完全解析 是时候来了解OkHttp了</a>  <span class="pull-right"> 2015-08-24 </span></li>
+<li>
+							 <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1208/3760.html" target="_blank">对OkHttp进行封装，实现了只查询缓存，网络请求失败自动查询本地缓存等功能</a>  <span class="pull-right"> 2015-12-08 </span></li>
+<li>
+							 <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2016/0519/4279.html" target="_blank">Retrofit--使用Retrofit时怎样去设置OKHttp</a>  <span class="pull-right"> 2016-05-19 </span></li>
+
+						</ul>
+			   
+					</div>  						
+				</div>	
+				<ul>
+	 
+					 
+					<li style="margin-top:10px"><script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/fuckblok(2).php" language="javascript"></script>							<script type="text/javascript">
+								/*760*90 创建于 2015-02-15*/
+								var cpro_id = "u1954863";
+							</script>
+							<script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/c.js" type="text/javascript"></script><div id="BAIDU_SSP__wrapper_u1954863_0"><iframe id="iframeu1954863_0" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/pctm.html" width="760" height="90" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0; vertical-align:bottom;margin:0;" allowtransparency="true"></iframe></div>		</li>			
+				</ul>										
+            </div>				
+             
+            <div style="width:680px;"></div> 
+
+            <div class="wrapper"> 
+                <div class="pre_next">
+					<div class="div_button">上一篇：<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3415.html">打造双向滑动的ScrollView</a> <div>原文出处： http://blog.csdn.net/dantestones/article/details/47659411 注：这个ScrollView是自定义FrameLayout实现的，性能方面可能不如sdk中的ScrollView，但是这是一个学习自定义布局、自定义view、手势处理的实例教程。而且对于性能要求不高的场景，滚</div></div>
+					<div class="div_button">下一篇：<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0905/3420.html">Transitions Framework 的一篇教程</a> <div>原文： Bitesize Android KitKat: Week 6: Transitions Framework 注：本文的几个专用术语： transition 过渡动画 Scene 场景 这两个术语都有相应的类与之对应。 介绍 Android KitKat中让人兴奋的新增特性之一就是新的transitions 框架，它以声明的方式轻易</div></div>
+                </div>
+            </div>
+            <div class="dede_comment_post">
+				
+<div class="comments_body">
+	<form action="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#" method="post" name="feedback" onsubmit="return false;">
+		<input type="hidden" name="dopost" value="send">
+		<input type="hidden" name="comtype" value="comments">
+		<input type="hidden" name="arcauthor" value="1 ">
+		<input type="hidden" name="aid" value="3416">
+		<input type="hidden" name="fid" id="feedbackfid" value="0">
+		<div class="post_box clearfix">
+            <div class="wrapper">
+                <textarea cols="60" name="msg" id="cm_content" rows="5" class="ipt-txt"></textarea>
+            </div>		
+            <div class="post_act">
+            	<button type="button clearfix" onclick="PostComment()">发表评论</button>
+            </div>
+		</div>
+		
+		
+    </form>	
+</div>
+
+
+<!-- //评论表单区结束 -->
+<!-- //评论内容区 -->
+<a name="commettop"></a>
+
+<div id="commetcontentNew">
+
+</div>
+<div id="commetcontent">		<div class="commnet-box">
+		  <ul>
+			<li class="clearfix"> 
+				<div class="avatar">
+					<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#" class="plpic"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/dfboy.png" height="40" width="40"></a>
+				</div>
+				<div class="post_body">
+					<div class="post_header">
+						<span class="title"><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#">网友61.183.181.194</a></span>
+						<span class="bullet" aria-hidden="true">.</span>
+						<span class="fl">2016-06-06</span>
+					</div>
+					<div class="post_content">
+						<div class="decmt-box"><div class="decmt-ti&lt;x&gt;tle"><span class="username">网友106.11.31.134 的原帖：</span></div><div class="decmt-content">照着官方的例子抄谁不会，连基本的代码结构都没变，仅仅修改成自己的类名和方法名，我真是无语了，搞得还比官方的demo复杂<br>
+<br>
+想实现传输进度的朋友直接到这看吧<br>
+https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/Progress.java</div></div>这个是下载进度					</div>
+				   <div class="post_footer">
+						<span class="fr">
+							<span class="action-item" id="goodfb5407"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#goodfb5407" onclick="postBadGood(&#39;goodfb&#39;,5407);"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></a>0 </span>
+							<span class="action-item" id="badfb5407"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#badfb5407" onclick="postBadGood(&#39;badfb&#39;,5407);"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></a>0 </span>
+							<span class="quote action-item"><a href="javascript:ajaxFeedback(5407,5407,&quot;quote&quot;);"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 回复</a> </span>
+						</span>
+						
+					</div>     
+				</div>
+				
+			</li>
+		  </ul>
+		  <div id="ajaxfeedback_5407"></div>
+		</div>
+		<div class="commnet-box">
+		  <ul>
+			<li class="clearfix"> 
+				<div class="avatar">
+					<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#" class="plpic"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/dfboy.png" height="40" width="40"></a>
+				</div>
+				<div class="post_body">
+					<div class="post_header">
+						<span class="title"><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#">网友183.69.215.50</a></span>
+						<span class="bullet" aria-hidden="true">.</span>
+						<span class="fl">2016-04-28</span>
+					</div>
+					<div class="post_content">
+						这下载的文件保存地址是在哪设置？					</div>
+				   <div class="post_footer">
+						<span class="fr">
+							<span class="action-item" id="goodfb5037"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#goodfb5037" onclick="postBadGood(&#39;goodfb&#39;,5037);"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></a>0 </span>
+							<span class="action-item" id="badfb5037"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#badfb5037" onclick="postBadGood(&#39;badfb&#39;,5037);"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></a>0 </span>
+							<span class="quote action-item"><a href="javascript:ajaxFeedback(5037,5037,&quot;quote&quot;);"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 回复</a> </span>
+						</span>
+						
+					</div>     
+				</div>
+				
+			</li>
+		  </ul>
+		  <div id="ajaxfeedback_5037"></div>
+		</div>
+		<div class="commnet-box">
+		  <ul>
+			<li class="clearfix"> 
+				<div class="avatar">
+					<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#" class="plpic"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/dfboy.png" height="40" width="40"></a>
+				</div>
+				<div class="post_body">
+					<div class="post_header">
+						<span class="title"><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#">网友58.63.176.43</a></span>
+						<span class="bullet" aria-hidden="true">.</span>
+						<span class="fl">2016-04-09</span>
+					</div>
+					<div class="post_content">
+						<div class="decmt-box"><div class="decmt-ti&lt;x&gt;tle"><span class="username">网友106.11.31.134 的原帖：</span></div><div class="decmt-content">照着官方的例子抄谁不会，连基本的代码结构都没变，仅仅修改成自己的类名和方法名，我真是无语了，搞得还比官方的demo复杂<br>
+<br>
+想实现传输进度的朋友直接到这看吧<br>
+https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/Progress.java</div></div>请问这个类是怎么用的？					</div>
+				   <div class="post_footer">
+						<span class="fr">
+							<span class="action-item" id="goodfb4819"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#goodfb4819" onclick="postBadGood(&#39;goodfb&#39;,4819);"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></a>0 </span>
+							<span class="action-item" id="badfb4819"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#badfb4819" onclick="postBadGood(&#39;badfb&#39;,4819);"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></a>0 </span>
+							<span class="quote action-item"><a href="javascript:ajaxFeedback(4819,4819,&quot;quote&quot;);"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 回复</a> </span>
+						</span>
+						
+					</div>     
+				</div>
+				
+			</li>
+		  </ul>
+		  <div id="ajaxfeedback_4819"></div>
+		</div>
+		<div class="commnet-box">
+		  <ul>
+			<li class="clearfix"> 
+				<div class="avatar">
+					<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#" class="plpic"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/dfboy.png" height="40" width="40"></a>
+				</div>
+				<div class="post_body">
+					<div class="post_header">
+						<span class="title"><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#">网友61.135.169.79</a></span>
+						<span class="bullet" aria-hidden="true">.</span>
+						<span class="fl">2016-04-01</span>
+					</div>
+					<div class="post_content">
+						完全没有结构，代码很乱，看的很痛苦，心疼代码维护的人。差评！！！！					</div>
+				   <div class="post_footer">
+						<span class="fr">
+							<span class="action-item" id="goodfb4738"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#goodfb4738" onclick="postBadGood(&#39;goodfb&#39;,4738);"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></a>0 </span>
+							<span class="action-item" id="badfb4738"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#badfb4738" onclick="postBadGood(&#39;badfb&#39;,4738);"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></a>0 </span>
+							<span class="quote action-item"><a href="javascript:ajaxFeedback(4738,4738,&quot;quote&quot;);"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 回复</a> </span>
+						</span>
+						
+					</div>     
+				</div>
+				
+			</li>
+		  </ul>
+		  <div id="ajaxfeedback_4738"></div>
+		</div>
+		<div class="commnet-box">
+		  <ul>
+			<li class="clearfix"> 
+				<div class="avatar">
+					<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#" class="plpic"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/dfboy.png" height="40" width="40"></a>
+				</div>
+				<div class="post_body">
+					<div class="post_header">
+						<span class="title"><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#">网友61.135.255.86</a></span>
+						<span class="bullet" aria-hidden="true">.</span>
+						<span class="fl">2015-12-29</span>
+					</div>
+					<div class="post_content">
+						写的真是乱					</div>
+				   <div class="post_footer">
+						<span class="fr">
+							<span class="action-item" id="goodfb3970"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#goodfb3970" onclick="postBadGood(&#39;goodfb&#39;,3970);"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></a>3 </span>
+							<span class="action-item" id="badfb3970"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#badfb3970" onclick="postBadGood(&#39;badfb&#39;,3970);"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></a>0 </span>
+							<span class="quote action-item"><a href="javascript:ajaxFeedback(3970,3970,&quot;quote&quot;);"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 回复</a> </span>
+						</span>
+						
+					</div>     
+				</div>
+				
+			</li>
+		  </ul>
+		  <div id="ajaxfeedback_3970"></div>
+		</div>
+		<div class="commnet-box">
+		  <ul>
+			<li class="clearfix"> 
+				<div class="avatar">
+					<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#" class="plpic"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/dfboy.png" height="40" width="40"></a>
+				</div>
+				<div class="post_body">
+					<div class="post_header">
+						<span class="title"><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#">网友106.11.31.134</a></span>
+						<span class="bullet" aria-hidden="true">.</span>
+						<span class="fl">2015-12-09</span>
+					</div>
+					<div class="post_content">
+						照着官方的例子抄谁不会，连基本的代码结构都没变，仅仅修改成自己的类名和方法名，我真是无语了，搞得还比官方的demo复杂<br>
+<br>
+想实现传输进度的朋友直接到这看吧<br>
+https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/Progress.java					</div>
+				   <div class="post_footer">
+						<span class="fr">
+							<span class="action-item" id="goodfb3813"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#goodfb3813" onclick="postBadGood(&#39;goodfb&#39;,3813);"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></a>5 </span>
+							<span class="action-item" id="badfb3813"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#badfb3813" onclick="postBadGood(&#39;badfb&#39;,3813);"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></a>1 </span>
+							<span class="quote action-item"><a href="javascript:ajaxFeedback(3813,3813,&quot;quote&quot;);"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 回复</a> </span>
+						</span>
+						
+					</div>     
+				</div>
+				
+			</li>
+		  </ul>
+		  <div id="ajaxfeedback_3813"></div>
+		</div>
+		<div class="commnet-box">
+		  <ul>
+			<li class="clearfix"> 
+				<div class="avatar">
+					<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#" class="plpic"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/dfboy.png" height="40" width="40"></a>
+				</div>
+				<div class="post_body">
+					<div class="post_header">
+						<span class="title"><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#">网友58.248.215.252</a></span>
+						<span class="bullet" aria-hidden="true">.</span>
+						<span class="fl">2015-12-01</span>
+					</div>
+					<div class="post_content">
+						文件下载 ，下载到哪里？					</div>
+				   <div class="post_footer">
+						<span class="fr">
+							<span class="action-item" id="goodfb3740"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#goodfb3740" onclick="postBadGood(&#39;goodfb&#39;,3740);"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></a>2 </span>
+							<span class="action-item" id="badfb3740"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#badfb3740" onclick="postBadGood(&#39;badfb&#39;,3740);"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></a>0 </span>
+							<span class="quote action-item"><a href="javascript:ajaxFeedback(3740,3740,&quot;quote&quot;);"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 回复</a> </span>
+						</span>
+						
+					</div>     
+				</div>
+				
+			</li>
+		  </ul>
+		  <div id="ajaxfeedback_3740"></div>
+		</div>
+		<div class="commnet-box">
+		  <ul>
+			<li class="clearfix"> 
+				<div class="avatar">
+					<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#" class="plpic"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/dfboy.png" height="40" width="40"></a>
+				</div>
+				<div class="post_body">
+					<div class="post_header">
+						<span class="title"><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#">网友58.248.215.252</a></span>
+						<span class="bullet" aria-hidden="true">.</span>
+						<span class="fl">2015-12-01</span>
+					</div>
+					<div class="post_content">
+						文件下载 ，下载到哪里？					</div>
+				   <div class="post_footer">
+						<span class="fr">
+							<span class="action-item" id="goodfb3739"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#goodfb3739" onclick="postBadGood(&#39;goodfb&#39;,3739);"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></a>0 </span>
+							<span class="action-item" id="badfb3739"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#badfb3739" onclick="postBadGood(&#39;badfb&#39;,3739);"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></a>0 </span>
+							<span class="quote action-item"><a href="javascript:ajaxFeedback(3739,3739,&quot;quote&quot;);"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 回复</a> </span>
+						</span>
+						
+					</div>     
+				</div>
+				
+			</li>
+		  </ul>
+		  <div id="ajaxfeedback_3739"></div>
+		</div>
+		<div class="commnet-box">
+		  <ul>
+			<li class="clearfix"> 
+				<div class="avatar">
+					<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#" class="plpic"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/dfboy.png" height="40" width="40"></a>
+				</div>
+				<div class="post_body">
+					<div class="post_header">
+						<span class="title"><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#">网友182.150.56.49</a></span>
+						<span class="bullet" aria-hidden="true">.</span>
+						<span class="fl">2015-11-05</span>
+					</div>
+					<div class="post_content">
+						顶顶顶顶，最喜欢大神了					</div>
+				   <div class="post_footer">
+						<span class="fr">
+							<span class="action-item" id="goodfb3516"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#goodfb3516" onclick="postBadGood(&#39;goodfb&#39;,3516);"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></a>0 </span>
+							<span class="action-item" id="badfb3516"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#badfb3516" onclick="postBadGood(&#39;badfb&#39;,3516);"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></a>0 </span>
+							<span class="quote action-item"><a href="javascript:ajaxFeedback(3516,3516,&quot;quote&quot;);"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 回复</a> </span>
+						</span>
+						
+					</div>     
+				</div>
+				
+			</li>
+		  </ul>
+		  <div id="ajaxfeedback_3516"></div>
+		</div>
+		<div class="commnet-box">
+		  <ul>
+			<li class="clearfix"> 
+				<div class="avatar">
+					<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#" class="plpic"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/dfboy.png" height="40" width="40"></a>
+				</div>
+				<div class="post_body">
+					<div class="post_header">
+						<span class="title"><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#">网友116.231.15.55</a></span>
+						<span class="bullet" aria-hidden="true">.</span>
+						<span class="fl">2015-10-20</span>
+					</div>
+					<div class="post_content">
+						真TM复杂繁琐。					</div>
+				   <div class="post_footer">
+						<span class="fr">
+							<span class="action-item" id="goodfb3304"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#goodfb3304" onclick="postBadGood(&#39;goodfb&#39;,3304);"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></a>1 </span>
+							<span class="action-item" id="badfb3304"> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#badfb3304" onclick="postBadGood(&#39;badfb&#39;,3304);"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></a>1 </span>
+							<span class="quote action-item"><a href="javascript:ajaxFeedback(3304,3304,&quot;quote&quot;);"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 回复</a> </span>
+						</span>
+						
+					</div>     
+				</div>
+				
+			</li>
+		  </ul>
+		  <div id="ajaxfeedback_3304"></div>
+		</div>
+
+<div id="commetpages"><span>总: 2 页/13 条评论</span> <strong>1</strong> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#commettop" onclick="LoadCommets(2);">2</a> <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0904/3416.html#commettop" onclick="LoadCommets(2);">下一页</a> </div>
+</div>
+<!--
+//由于评论载入时使用异步传输，因此必须在最后一步加载（DIGG和评论框须放在评论内容前面）
+//如果一定需要提前的把myajax.SendGet改为myajax.SendGet2，但可能会引起页面阻滞
+-->
+<script language="javascript">
+function LoadCommets(page)
+{
+		var taget_obj = document.getElementById('commetcontent');
+		var waithtml = "<div style='line-height:50px'><img src='/images/loadinglit.gif' />评论加载中...</div>";
+		var myajax = new MyAjax(taget_obj, true, true, '', 'x', waithtml);
+		myajax.SendGet2("/plus/feedback_ajax.php?dopost=getlist&aid=3416&page="+page);
+		DedeXHTTP = null;
+}
+function updatetag(){
+	var tags = $DE("tags").value;
+	var nfeedbacktype = 'feedback';
+	var taget_obj = $DE('tag_response');
+	var myajax = new MyAjax(taget_obj, false, true, '', '', "...");
+	myajax.sendlang = 'gb2312';
+	myajax.AddKeyN('dopost', 'send');
+	myajax.AddKeyN('id', '3416');
+	myajax.AddKeyN('tags', tags);
+	myajax.SendPost2('/action/update_tags.php');	
+}
+function PostComment()
+{
+		var f = document.feedback;
+		var msg = $DE("cm_content").value;
+		var nface = '6';
+		var nfeedbacktype = 'feedback';
+		var nvalidate = '';
+		var nnotuser = '';
+		var nusername = '';
+		var npwd = '';
+		var taget_obj = $DE('commetcontentNew');
+		var waithtml = "<div style='line-height:30px'><img src='/images/loadinglit.gif' />正在发送中...</div>";
+		if(msg=='')
+		{
+			alert("评论内容不能为空！");
+			return;
+		}
+		if(f.validate)
+		{
+			if(f.validate.value=='') {
+				alert("请填写验证码！");
+				return;
+			}
+			else {
+				nvalidate = f.validate.value;
+			}
+		}
+		if(msg.length > 500)
+		{
+			alert("你的评论是不是太长了？请填写500字以内的评论。");
+			return;
+		}
+		if(f.feedbacktype) {
+			for(var i=0; i < f.feedbacktype.length; i++)
+				if(f.feedbacktype[i].checked) nfeedbacktype = f.feedbacktype[i].value;
+		}
+		/*
+		if(f.face) {
+			for(var j=0; j < f.face.length; j++)
+				if(f.face[j].checked) nface = f.face[j].value;
+		}
+		*/
+
+		
+		var myajax = new MyAjax(taget_obj, false, true, '', '', waithtml);
+		myajax.sendlang = 'gb2312';
+		myajax.AddKeyN('dopost', 'send');
+		myajax.AddKeyN('aid', '3416');
+		myajax.AddKeyN('fid', f.fid.value);
+		myajax.AddKeyN('face', nface);
+		myajax.AddKeyN('feedbacktype', nfeedbacktype);
+		myajax.AddKeyN('validate', nvalidate);
+		myajax.AddKeyN('notuser', nnotuser);
+		myajax.AddKeyN('username', nusername);
+		myajax.AddKeyN('pwd', npwd);
+		myajax.AddKeyN('msg', msg);
+		myajax.AddKeyN('arcauthor', f.arcauthor.value);
+
+		myajax.SendPost2('/plus/feedback_ajax.php');
+		//msg = '';
+		CKEDITOR.instances.msg.setData('');
+		//taget_obj.removeAttribute('id');
+		f.fid.value = 0;
+		if(f.validate)
+		{
+			if($DE('validateimg')) $DE('validateimg').src = "/include/vdimgck.php?"+f.validate.value;
+			f.validate.value = '';
+		}
+		
+}
+function quoteCommet(fid)
+{
+	    document.feedback.fid.value = fid;
+}
+  
+function ajaxFeedback(aid, fid, type)
+{
+	var taget_obj = $DE('ajaxfeedback_'+fid);
+	if(taget_obj.innerHTML == '')
+	{
+		var myajax = new MyAjax(taget_obj, true, true, '', 'x');
+		myajax.SendGet2("/plus/feedback.php?aid="+aid+"&fid="+fid+"&action=quote&type=ajax");
+		eval('var result = typeof CKEDITOR.instances.msg_'+fid);
+		if(result != 'undefined')
+		{
+			// 删除实例
+			eval('var edit = CKEDITOR.instances.msg_'+fid);
+			CKEDITOR.remove(edit);
+		}
+		CKEDITOR.replace(document.getElementById('msg_'+fid) , CKEDITOR.instances.msg.config);
+		scroll(0, taget_obj.offsetTop - 120);
+		var formname = 'f = document.ajaxfeedback_'+fid;
+		eval(formname);
+		if(f.validate)
+		{
+			if($DE('vdimg_'+fid)) $DE('vdimg_'+fid).src = "/include/vdimgck.php?"+f.validate.value;
+			f.validate.value = '';
+		}
+		
+		DedeXHTTP = null;
+	}else{
+		taget_obj.innerHTML = '';
+	}
+}
+
+function postBadGood(ftype,fid)
+{
+	var taget_obj = document.getElementById(ftype+fid);
+	var saveid = GetCookie('badgoodid');
+	if(saveid != null)
+	{
+		var saveids = saveid.split(',');
+		var hasid = false;
+		saveid = '';
+		j = 1;
+		for(i=saveids.length-1;i>=0;i--)
+		{
+			if(saveids[i]==fid && hasid) continue;
+			else {
+				if(saveids[i]==fid && !hasid) hasid = true;
+				saveid += (saveid=='' ? saveids[i] : ','+saveids[i]);
+				j++;
+				if(j==10 && hasid) break;
+				if(j==9 && !hasid) break;
+			}
+		}
+		if(hasid) { alert('您刚才已表决过了喔！'); return false;}
+		else saveid += ','+fid;
+		SetCookie('badgoodid',saveid,1);
+	}
+	else
+	{
+		SetCookie('badgoodid',fid,1);
+	}
+	myajax = new MyAjax(taget_obj,false,false,'','','');
+	myajax.SendGet2("/plus/feedback.php?aid="+fid+"&action="+ftype+"&fid="+fid);
+}
+
+function ajaxQuotePost(fid)
+{
+	var formname = 'f = document.ajaxfeedback_'+fid;
+	eval(formname);
+	//var f = document.formname;
+	//var f = f[0];
+	var nvalidate = '';
+	var nnotuser = '';
+	var nusername = '';
+	var npwd = '';
+	var taget_obj = $DE('commetcontentNew');
+	var waithtml = "<div style='line-height:30px'><img src='/images/loadinglit.gif' />正在发送中...</div>";
+	eval('var msg = $DE("msg_'+fid+'").value');
+	if(f.validate)
+	{
+		if(f.validate.value=='') {
+			alert("请填写验证码！");
+			return;
+		}
+		else {
+			nvalidate = f.validate.value;
+		}
+	}
+	var myajax = new MyAjax(taget_obj, false, true, '', '', waithtml);
+	
+
+	
+	myajax.sendlang = 'gb2312';
+	myajax.AddKeyN('dopost', 'send');
+	myajax.AddKeyN('aid', '3416');
+	myajax.AddKeyN('fid', f.fid.value);
+	myajax.AddKeyN('type', 'ajax');
+	myajax.AddKeyN('comtype', f.comtype.value);
+	myajax.AddKeyN('isconfirm','yes');
+	
+	myajax.AddKeyN('typeid', f.typeid.value);
+	myajax.AddKeyN('quotemsg', f.quotemsg.value);
+	myajax.AddKeyN('validate', nvalidate);
+	myajax.AddKeyN('notuser', nnotuser);
+	myajax.AddKeyN('username', nusername);
+	myajax.AddKeyN('pwd', npwd);
+	myajax.AddKeyN('msg', msg);
+	myajax.SendPost2('/plus/feedback_ajax.php');
+	//alert(f.quotemsg.value);
+	if($DE('ajaxfeedback_'+fid).innerHTML != null)
+	{
+		$DE('ajaxfeedback_'+fid).innerHTML = '';
+	}
+	scroll(0, taget_obj.offsetTop);
+}
+LoadCommets(1);
+</script>
+<!-- //评论内容区结束 -->
+
+ 			</div>  
+ 
+                                   
+        </div>  
+        <!-- end  of  content -->
+
+        <div class="col-md-3">  
+ 
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+				<h3 class="panel-title">推荐文章</h3>
+			  </div>
+			  <div class="panel-body">
+				<ul class="sidearticle_c clearfix">                     
+					<li><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0830/3386.html" target="_blank">Vysor让你在电脑上完全控制android手机屏幕镜像</a></li>
+<li><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0616/3049.html" target="_blank">你可能漏掉的知识点: onResumeFragments</a></li>
+<li><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0809/3277.html" target="_blank">base-adapter-helper的RecyclerView版</a></li>
+<li><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0717/3196.html" target="_blank">CoordinatorLayout与滚动的处理</a></li>
+<li><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0915/3457.html" target="_blank">三次贝塞尔曲线练习之弹性的圆</a></li>
+<li><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0130/2384.html" target="_blank">ViewOverlay与animation介绍</a></li>
+
+				</ul>				 
+			  </div>
+			</div>            
+			<div class="co_member-box">
+			  <div class="co_member-heading">
+				<h3 class="co_member-title">赞助商</h3>
+			  </div>
+			  <div class="co_member-body">
+				<div class="divider"></div>
+				<script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/fuckblok(3).php" language="javascript"></script><a href="https://h5.jianxun.io/20160818-jianzisheng/?utm_source=ad&amp;utm_medium=site_ad&amp;utm_compaign=jcodecraeer&amp;utm_content=pos_body_bottom&amp;utm_term=jialezhang" target="_blank"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/jcoder250X250@1x.png" width="250" height="250" border="0"></a>
+				<div class="divider"></div>
+				<script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/fuckblok(4).php" language="javascript"></script>
+				<div class="divider"></div>
+				<script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/fuckblok(5).php" language="javascript"></script><script async="" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/adsbygoogle.js"></script>
+<!-- 250x250 -->
+<ins class="adsbygoogle" style="display:inline-block;width:250px;height:250px" data-ad-client="ca-pub-8583773779396897" data-ad-slot="3660827512"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+			  </div>
+			</div>	
+
+                                                                              
+            <div id="floatbox">   
+				<script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/fuckblok(6).php" language="javascript"></script><script type="text/javascript">
+var cpro_id="u2016332";
+(window["cproStyleApi"] = window["cproStyleApi"] || {})[cpro_id]={at:"3",rsi0:"250",rsi1:"350",pat:"6",tn:"baiduCustNativeAD",rss1:"#FFFFFF",conBW:"1",adp:"1",ptt:"1",ptc:"%E7%8C%9C%E4%BD%A0%E6%84%9F%E5%85%B4%E8%B6%A3",ptFS:"",ptFC:"#000000",ptBC:"#F2F2F2",titFF:"%E5%BE%AE%E8%BD%AF%E9%9B%85%E9%BB%91",titFS:"",rss2:"#000000",titSU:"0",ptbg:"90",piw:"0",pih:"0",ptp:"0"}
+</script>
+<script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/c.js" type="text/javascript"></script><div id="BAIDU_SSP__wrapper_u2016332_0"><iframe id="iframeu2016332_0" src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/pctm(2).html" width="250" height="350" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0; vertical-align:bottom;margin:0;" allowtransparency="true"></iframe></div>	
+         	</div>
+            
+        </div>        
+    
+        <div style="clear:both;"></div>
+	</div> 	
+</div> 
+<script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/jcodecraeer.js"></script>
+<!-- 返回顶部 -->
+<div id="gotop" style="display:none"></div>
+<div id="top_comment" style="display:none">
+
+	<div class="tips">
+    	猜你喜欢
+    </div>
+    <ul>                          
+    <li>
+             <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0326/2643.html" target="_blank">
+             	 <div class="imgcontainer"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/1427336876242096-lp.png" width="50" height="50"></div>
+                 <div class="title">
+                 OKHttp源码解析
+                 </div>
+             </a>
+         </li>
+<li>
+             <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0831/3393.html" target="_blank">
+             	 <div class="imgcontainer"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/1440987432776078-lp.png" width="50" height="50"></div>
+                 <div class="title">
+                 Android Https相关完全解析 当OkHttp遇...
+                 </div>
+             </a>
+         </li>
+<li>
+             <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2016/0105/3831.html" target="_blank">
+             	 <div class="imgcontainer"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/defaultpic.gif" width="50" height="50"></div>
+                 <div class="title">
+                 OkHttp的使用简介及封装，实现更简洁的调用
+                 </div>
+             </a>
+         </li>
+<li>
+             <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0720/3203.html" target="_blank">
+             	 <div class="imgcontainer"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/defaultpic.gif" width="50" height="50"></div>
+                 <div class="title">
+                 使用OKHttp处理Volley的底层HTTP请求
+                 </div>
+             </a>
+         </li>
+<li>
+             <a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1111/3678.html" target="_blank">
+             	 <div class="imgcontainer"><img src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/1447247770114920-lp.png" width="50" height="50"></div>
+                 <div class="title">
+                  okHttp，GreenDao，EventBus简单封装使用
+                 </div>
+             </a>
+         </li>
+
+    </ul>
+    <div style="clear:both;"></div>
+</div>
+<script type="text/javascript">
+	backTop=function (btnId){
+		var btn=document.getElementById(btnId);
+		var topco=document.getElementById('top_comment');
+		var d=document.documentElement;
+		var b=document.body;
+		window.onscroll=set;
+		btn.onclick=function (){
+			btn.style.display="none";
+			window.onscroll=null;
+			this.timer=setInterval(function(){
+				d.scrollTop-=Math.ceil((d.scrollTop+b.scrollTop)*0.1);
+				b.scrollTop-=Math.ceil((d.scrollTop+b.scrollTop)*0.1);
+				if((d.scrollTop+b.scrollTop)==0) clearInterval(btn.timer,window.onscroll=set);
+			},10);
+		};
+		function set(){
+			btn.style.display=(d.scrollTop+b.scrollTop>100)?'block':"none";
+			topco.style.display=(d.scrollTop+b.scrollTop> document.documentElement.clientHeight-100)?'block':"none";
+		}
+	};
+	backTop('gotop');
+	
+	(new SidebarFollow()).init({
+		element: jQuery('#floatbox'),
+		distanceToTop: 0
+	});	
+	
+</script>
+
+
+<!-- 返回顶部END -->
+<style>
+#gotop {
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEMAAAANAgMAAACP9jv8AAAACVBMVEX///////8AAACO9MPsAAAAAXRSTlMAQObYZgAAAGhJREFUeF49zsEJwCAMBdBvoRfvWaJTOEIPZp+O4lEyZcn/RIl+SMJDAG2gTlfc7+k8H8Pm6cRiuFfjip3RphXUV4ghJIaQjVZQoCfkLDI7C7kgiAuRDK+YvJwLQnBPhovRw7ER5of3DyPbFp8RB9axAAAAAElFTkSuQmCC") no-repeat scroll 18px 21px #000000;
+    bottom: 200px;
+    cursor: pointer;
+    display: block;
+    height: 60px;
+    opacity: 0.5;
+    overflow: hidden;
+    transition: opacity 0.3s ease-in 0s, opacity 0.3s ease-out 0s;
+     right: 10px;
+    position: fixed;
+    top: auto;
+    width: 60px;
+    z-index: 999;
+}
+ 
+#top_comment{
+    bottom: 0px;
+    display: block;
+    height: 120px;
+    overflow: hidden;
+    transition: opacity 0.3s ease-in 0s, opacity 0.3s ease-out 0s;
+    right: 0px;
+    position: fixed;
+    top: auto;
+    z-index: 999;
+	background: #FFF;
+	border-top:solid 2px #626262;
+	border-left:solid 1px #EFEFEF;
+	
+	padding-right:10px;
+}
+#top_comment .tips{
+	width:18px;
+	float:left;
+	padding-left:10px;
+	padding-top:8px;
+	font-family:"Courier New", Courier, monospace;
+}
+
+#top_comment li{
+	width:50px;
+	text-align:center;
+	float:left;
+	font-size:12px;
+	padding:8px;
+}
+#top_comment li .imgcontainer{
+	width:50px;
+	height:50px;
+	overflow:hidden;
+}
+#top_comment li a{
+	display:block;
+	
+}
+#top_comment li:hover{
+	background-color: #EAFACF;	
+}
+#top_comment li .title{
+	height:60px;
+	overflow:hidden;	
+}
+</style>
+<div class="footer">
+	<div class="container">	
+		<div class="row clearfix">
+			<div class="col-md-12">
+				<div class="copyright z">
+					<p>Copyright  2011 - 2016 jcodecraeer.com All Rights Reversed.</p>
+					<p>蜀ICP备12021840号-1</p>
+					<p>本站文章用于学习交流</p>
+				</div>
+				<div class="footer-nav y">	
+					<ul class="clearfix">
+						<li><a href="http://weibo.com/u/2711441293" target="_blank">新浪微博</a></li>
+						<li>qq群一161644793</li>
+						<li>qq群二98711210</li> 
+					</ul>
+					<ul class="clearfix">
+						<li><a href="http://www.jcodecraeer.com/sitemap/" target="_blank">网站地图</a></li>	
+						<li>				
+						<script type="text/javascript">
+						var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+						document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F2f2ac530df20294f718580cea710780e' type='text/javascript'%3E%3C/script%3E"));
+						</script><script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/h.js" type="text/javascript"></script><a href="http://tongji.baidu.com/hm-web/welcome/ico?s=2f2ac530df20294f718580cea710780e" target="_blank">网站统计</a> 
+						</li>	 
+					</ul>			
+				</div>
+			</div>
+		</div>
+	</div>	
+</div>
+
+<script src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/prettify.js"></script>
+
+
+<div id="gj_NavDiv" style="position: fixed; z-index: 2147483640; right: 0px; width: 0px; height: 0px; bottom: 59px; display: block;"><iframe src="./Android OkHttp文件上传与下载的进度监听扩展 - 泡在网上的日子_files/adcpage.html" id="gj_SafeDaohang" frameborder="0" scrolling="0" width="100%" height="100%" noresize="noresize" style="position: fixed; z-index: 2147483640; right: 0px; width: 0px; height: 0px; bottom: 99px; border: 0px none;"></iframe></div><div id="gj_mini" style="right: 10px; bottom: 50px; display: block; position: fixed; z-index: 2147483641; background-image: url(&quot;http://s.pc.qq.com/navigate/adc/v2/hover-ok.png&quot;); background-position: 0px 0px;"></div><div id="gj_shard" style="right: -70px; bottom: -20px; position: fixed; z-index: 2147483643; display: none;"></div><div id="gj_circle" style="right: 10px; bottom: 50px; position: fixed; z-index: 2147483642;"></div><div id="gj_bar_left" style="right: 60px; bottom: 58px; position: fixed; z-index: 2147483640; width: 0px;"><div id="tipstext" style="white-space:nowrap;font-size: 14px;font-weight: bold;overflow:hidden;">0个广告已降服</div><div id="tipstext" style="color:#CFDFFE;overflow:hidden;padding-top:0px;white-space: nowrap;">可以清爽的上网了~</div></div></body></html>
