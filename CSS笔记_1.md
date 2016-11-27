@@ -187,3 +187,21 @@ a:类名:状态名{样式...}
     然后给`父元素`使用就可以了。
 
     ![CSS控制背景](img/使用伪对象after清除浮动.jpg)
+
+
+## 水平居中的技巧
+
+1. 行内元素水平居中：设置父元素`text-align:center;`
+2. 块元素水平居中：设置`margin：0 auto;`
+3. 绝对定位如何设置元素水平居中：
+
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        right: 50%;
+        /*到这里为止，就设置了元素的水平居中，但是有一个问题，元素的左边刚好位于中间，
+        而整块元素就会偏右，所以要进行水平移动。参考CSS3的transform的translate属性用法。*/
+        transform: translate(-50%, -35%); 
+
+
+
